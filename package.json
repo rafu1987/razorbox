@@ -1,8 +1,20 @@
 {
-  "name": "razorbox",
+  "name": "@rafu1987/razorbox",
   "version": "0.7.0-alpha.2",
   "description": "Lightweight, dependency-free, Fancybox-inspired image, video, HTML, iframe, maps and PDF lightbox with separate CSS.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rafu1987/razorbox.git"
+  },
+  "homepage": "https://github.com/rafu1987/razorbox#readme",
+  "bugs": {
+    "url": "https://github.com/rafu1987/razorbox/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "license": "MIT",
   "sideEffects": [
     "**/*.css"
