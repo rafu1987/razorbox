@@ -1,6 +1,6 @@
 {
   "name": "@rafu1987/razorbox",
-  "version": "0.7.0-alpha.2",
+  "version": "0.7.0-alpha.3",
   "description": "Lightweight, dependency-free, Fancybox-inspired image, video, HTML, iframe, maps and PDF lightbox with separate CSS.",
   "type": "module",
   "repository": {

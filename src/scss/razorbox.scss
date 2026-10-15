@@ -197,7 +197,11 @@ body.razorbox-scroll-lock { overflow: hidden !important; }
   will-change: transform;
 }
 .razorbox__slide.is-loaded .razorbox__image { opacity: 1; }
-.razorbox.is-zoomed .razorbox__image { cursor: grab; }
+.razorbox.is-zoomed .razorbox__image {
+  position: relative;
+  z-index: 3;
+  cursor: grab;
+}
 .razorbox.is-zoomed .razorbox__image:active { cursor: grabbing; }
 .razorbox__image.is-dragging { transition: none; }
 
