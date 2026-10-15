@@ -1,0 +1,64 @@
+{
+  "name": "razorbox",
+  "version": "0.7.0-alpha.2",
+  "description": "Lightweight, dependency-free, Fancybox-inspired image, video, HTML, iframe, maps and PDF lightbox with separate CSS.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/razorbox.js",
+  "module": "./dist/razorbox.js",
+  "types": "./dist/razorbox.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/razorbox.d.ts",
+      "import": "./dist/razorbox.js",
+      "default": "./dist/razorbox.js"
+    },
+    "./css": "./dist/razorbox.css",
+    "./razorbox.css": "./dist/razorbox.css",
+    "./scss": "./src/scss/razorbox.scss",
+    "./package.json": "./package.json",
+    "./min": {
+      "types": "./dist/razorbox.d.ts",
+      "import": "./dist/razorbox.min.js",
+      "default": "./dist/razorbox.min.js"
+    },
+    "./css/min": "./dist/razorbox.min.css",
+    "./razorbox.min.js": "./dist/razorbox.min.js",
+    "./razorbox.min.css": "./dist/razorbox.min.css"
+  },
+  "files": [
+    "dist",
+    "src/scss",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "vite --open /demo.html",
+    "build": "vite build --mode readable && vite build --mode minified && node scripts/copy-types.mjs",
+    "test": "node --test tests/package.test.mjs",
+    "test:browser": "node --test tests/browser.test.mjs"
+  },
+  "devDependencies": {
+    "sass": "^1.90.0",
+    "vite": "^7.1.0",
+    "terser": "^5.39.2"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "keywords": [
+    "lightbox",
+    "gallery",
+    "vanilla-js",
+    "scss",
+    "vite",
+    "fancybox-alternative",
+    "video-lightbox",
+    "youtube",
+    "vimeo"
+  ]
+}

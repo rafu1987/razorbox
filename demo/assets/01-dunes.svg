@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eac7a5"/><stop offset="1" stop-color="#a56f77"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#ffecb6" stop-opacity=".56"/><stop offset="1" stop-color="#ffecb6" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#11162a" stop-opacity=".18"/></linearGradient>
+    <filter id="haze"><feGaussianBlur stdDeviation="36"/></filter>
+  </defs>
+  <rect width="1800" height="1200" fill="url(#sky)"/>
+  
+  <circle cx="1210" cy="300" r="440" fill="url(#glow)"/>
+  <circle cx="1210" cy="300" r="68" fill="#ffecb6" opacity=".82"/>
+  <ellipse cx="900" cy="755" rx="850" ry="130" fill="#fff" opacity=".06" filter="url(#haze)"/>
+  <path d="M0 850 C310 610 490 850 780 680 C1120 490 1440 610 1800 490 L1800 1200 L0 1200 Z" fill="#e4a47c"/><path d="M0 1010 C370 690 710 850 970 730 C1300 575 1470 790 1800 710 L1800 1200 L0 1200 Z" fill="#c87d70"/><path d="M0 1090 C400 985 730 1110 1160 900 C1420 790 1700 950 1800 880 L1800 1200 L0 1200 Z" fill="#905d67"/>
+  
+  
+  
+  <rect width="1800" height="1200" fill="url(#shade)"/>
+</svg>

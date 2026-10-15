@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f6f2">
+  <title>razorbox - Vanilla JavaScript lightbox</title>
+  <link rel="stylesheet" href="./demo/demo.css">
+  <link rel="stylesheet" href="./dist/razorbox.css">
+  <script type="module" src="./demo/main.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="razorbox home"><span class="brand-icon">r</span><span>razorbox<span class="wordmark-dot">.</span></span></a>
+      <nav class="site-links" aria-label="Page navigation"><a href="#features">Features</a><a href="#examples">Examples</a><a class="nav-demo" href="#gallery">Live demo <span aria-hidden="true">&#8599;</span></a></nav>
+    </header>
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse"></span> V0.7.0-ALPHA.2 / VANILLA JS + SCSS</div>
+          <h1>Everything you love in a <em>lightbox.</em><br>Nothing you don't.</h1>
+          <p class="hero-description">An elegant image gallery with the familiar classic controls, silky transitions, and absolutely no runtime dependencies. Meet razorbox.</p>
+          <div class="hero-actions"><button type="button" id="launch-demo" class="btn btn-primary">Open the gallery <span aria-hidden="true">&#8599;</span></button><a class="btn btn-outline" href="#documentation">How it works <span aria-hidden="true">&#8594;</span></a></div>
+          <div class="hero-notes"><span><span class="note-check">&#10003;</span> No CSS injection</span><span><span class="note-check">&#10003;</span> Accessible controls</span><span><span class="note-check">&#10003;</span> Tiny footprint</span></div>
+        </div>
+        <a href="#gallery" id="open-hero-gallery" class="hero-visual" aria-label="Open the razorbox gallery">
+          <img src="./demo/assets/01-dunes.svg" alt="Minimal golden sand dunes under a soft pink sky">
+          <span class="preview-glass"><span class="preview-icon">&#8599;</span><span><strong>Try razorbox</strong><small>Click to preview gallery</small></span></span>
+          <span class="visual-tag">01 / 06</span>
+        </a>
+      </section>
+      <section id="gallery" class="gallery-section">
+        <div class="section-heading"><div><p class="section-kicker">THE DEMO</p><h2>Go ahead. Take a closer look.</h2><p>Every image is clickable. Use the arrow keys, try the zoom, or explore the bottom thumbnail rail.</p></div><span class="section-count">01 / IMAGE GALLERY</span></div>
+        <div class="gallery-grid">
+          <a class="gallery-card" href="./demo/assets/01-dunes.svg" data-razorbox="atlas" data-caption="Golden Hour - Warm dunes after sunset"><img src="./demo/assets/01-dunes.svg" alt="Pink and golden dunes" loading="lazy"><span><strong>Golden Hour</strong><small>Desert study / 01</small></span></a>
+          <a class="gallery-card" href="./demo/assets/02-peaks.svg" data-razorbox="atlas" data-caption="Northern Peaks - Frozen ridgelines in pale blue" ><img src="./demo/assets/02-peaks.svg" alt="Blue mountains and snowy summits" loading="lazy"><span><strong>Northern Peaks</strong><small>Mountain study / 02</small></span></a>
+          <a class="gallery-card" href="./demo/assets/03-coast.svg" data-razorbox="atlas" data-caption="Still Waters - A soft coastal evening"><img src="./demo/assets/03-coast.svg" alt="Warm pink coast and turquoise sea" loading="lazy"><span><strong>Still Waters</strong><small>Coastal study / 03</small></span></a>
+          <a class="gallery-card" href="./demo/assets/04-canyon.svg" data-razorbox="atlas" data-caption="Monument Valley - Terracotta cliffs at dusk"><img src="./demo/assets/04-canyon.svg" alt="Warm terracotta canyon silhouettes" loading="lazy"><span><strong>Monument Valley</strong><small>Canyon study / 04</small></span></a>
+          <a class="gallery-card" href="./demo/assets/05-forest.svg" data-razorbox="atlas" data-caption="Evergreen - Layers of mountain forest in the morning mist"><img src="./demo/assets/05-forest.svg" alt="Teal mountain forest silhouettes" loading="lazy"><span><strong>Evergreen</strong><small>Forest study / 05</small></span></a>
+          <a class="gallery-card" href="./demo/assets/06-nightfall.svg" data-razorbox="atlas" data-caption="Blue Hour - Last light over the valley"><img src="./demo/assets/06-nightfall.svg" alt="Starry indigo mountain night" loading="lazy"><span><strong>Blue Hour</strong><small>Night study / 06</small></span></a>
+        </div>
+        <div class="secondary-gallery">
+          <div class="secondary-gallery__heading"><div><p class="section-kicker">INDEPENDENT GROUP</p><h3>A second gallery. Its own navigation.</h3></div><p>Different <code>data-razorbox</code> value, completely separate slides.</p></div>
+          <div class="secondary-grid">
+            <a href="./demo/assets/02-peaks.svg" data-razorbox="details" data-caption="Independent gallery / Ice-blue ridgelines"><img src="./demo/assets/02-peaks.svg" alt="Mountain peaks" loading="lazy"></a>
+            <a href="./demo/assets/04-canyon.svg" data-razorbox="details" data-caption="Independent gallery / Desert canyon"><img src="./demo/assets/04-canyon.svg" alt="Red canyon" loading="lazy"></a>
+            <a href="./demo/assets/06-nightfall.svg" data-razorbox="details" data-caption="Independent gallery / Nightfall"><img src="./demo/assets/06-nightfall.svg" alt="Dark mountain night" loading="lazy"></a>
+          </div>
+        </div>
+      </section>
+      <section class="media-demo" id="media-demo">
+        <div class="section-heading"><div><p class="section-kicker">VIDEO SUPPORT</p><h2>Still images. Moving pictures.</h2><p>HTML5, YouTube and Vimeo video links work alongside photos, with autoplay, privacy-enhanced embeds and stop-on-close.</p></div><span class="section-count">02 / VIDEO GALLERY</span></div>
+        <div class="media-grid">
+          <a class="media-card" href="./demo/assets/demo-motion.mp4" data-razorbox="motion" data-type="video" data-poster="./demo/assets/01-dunes.svg" data-caption="HTML5 video: four-second sample with ambient audio" data-alt="Gentle motion across sunset dunes">
+            <img src="./demo/assets/01-dunes.svg" alt="Golden dunes video poster" loading="lazy"><span class="media-card__play">&#9654;</span><span class="media-card__info"><strong>Native HTML5 video</strong><small>Local MP4 / Plays inline</small></span>
+          </a>
+          <a class="media-card" href="https://www.youtube.com/watch?v=lPYHfdapsEY" data-razorbox="motion" data-caption="YouTube video: custom example (lPYHfdapsEY)" data-alt="YouTube demonstration video">
+            <img src="./demo/assets/03-coast.svg" alt="YouTube video cover" loading="lazy"><span class="media-card__play">&#9654;</span><span class="media-card__info"><strong>YouTube</strong><small>Video URL / Autoplay</small></span>
+          </a>
+          <a class="media-card" href="https://vimeo.com/253905163" data-razorbox="motion" data-caption="Vimeo video: custom example (253905163)" data-alt="Vimeo demonstration video">
+            <img src="./demo/assets/06-nightfall.svg" alt="Vimeo video cover" loading="lazy"><span class="media-card__play">&#9654;</span><span class="media-card__info"><strong>Vimeo</strong><small>Video URL / Autoplay</small></span>
+          </a>
+        </div>
+        <p class="media-note">HTML5 uses a bundled four-second video with sound and works offline. YouTube uses youtube-nocookie.com and Vimeo uses dnt=1 by default. Both still connect to external services and may require consent. The demos need internet access and embeddable videos.</p>
+      </section>
+      <section class="media-demo" id="content-demo">
+        <div class="section-heading"><div><p class="section-kicker">BEYOND MEDIA</p><h2>HTML, maps, documents. Your content.</h2><p>Open on-page HTML, trusted iframes, Google Maps or PDF documents in the same lightbox, with native viewer fallbacks.</p></div><span class="section-count">03 / CONTENT TYPES</span></div>
+        <div class="media-grid media-grid--extras">
+          <a class="media-card" href="#demo-inline-content" data-type="html" data-razorbox="extras" data-thumb="./demo/assets/02-peaks.svg" data-caption="HTML example: interactive inline content" data-alt="Inline HTML demo">
+            <img src="./demo/assets/02-peaks.svg" alt="Inline HTML example" loading="lazy"><span class="media-card__info"><strong>Inline HTML</strong><small>Original DOM element / #id</small></span>
+          </a>
+          <a class="media-card" href="./demo/iframe.html" data-type="iframe" data-razorbox="extras" data-thumb="./demo/assets/05-forest.svg" data-caption="Iframe example: another local page" data-alt="Same-origin iframe example">
+            <img src="./demo/assets/05-forest.svg" alt="Iframe example" loading="lazy"><span class="media-card__info"><strong>Iframe</strong><small>Trusted URL / another webpage</small></span>
+          </a>
+          <a class="media-card" href="https://www.google.com/maps/search/?api=1&amp;query=Empire+State+Building&amp;query_place_id=ChIJaXQRs6lZwokRY6EFpJnhNNE" data-razorbox="extras" data-type="map" data-thumb="./demo/assets/03-coast.svg" data-caption="Google Maps example: Empire State Building" data-alt="Map of the Empire State Building">
+            <img src="./demo/assets/03-coast.svg" alt="Google Maps example" loading="lazy"><span class="media-card__info"><strong>Google Maps</strong><small>Standard Maps link / automatic embed</small></span>
+          </a>
+          <a class="media-card" href="./demo/assets/razorbox-demo.pdf" data-razorbox="extras" data-thumb="./demo/assets/01-dunes.svg" data-caption="PDF example: razorbox demo document" data-alt="razorbox PDF document">
+            <img src="./demo/assets/01-dunes.svg" alt="PDF document example" loading="lazy"><span class="media-card__info"><strong>PDF document</strong><small>Browser PDF viewer / open in new tab</small></span>
+          </a>
+        </div>
+      </section>
+      <div id="demo-inline-content" hidden style="display: none">
+        <p class="inline-eyebrow">INLINE HTML IN razorbox</p>
+        <h2>This is a real DOM element.</h2>
+        <p>Unlike a clone, this content retains its own state and event listeners. On close it returns to its original place in the document.</p>
+        <label for="demo-inline-input" class="inline-label">Try typing here</label>
+        <input id="demo-inline-input" type="text" placeholder="Your text stays here after closing">
+      </div>
+      <section id="examples" class="examples-section">
+        <div class="section-heading"><div><p class="section-kicker">COPY &amp; PASTE</p><h2>Working examples. Simple markup.</h2><p>Choose a content type to see the actual HTML or JavaScript needed to open it in razorbox.</p></div><span class="section-count">04 / CODE EXAMPLES</span></div>
+        <div class="examples__tabs" aria-label="Code example content type">
+          <button type="button" class="examples__tab is-selected" data-example-tab="gallery" aria-pressed="true">Gallery</button>
+          <button type="button" class="examples__tab" data-example-tab="html5" aria-pressed="false">HTML5 video</button>
+          <button type="button" class="examples__tab" data-example-tab="youtube" aria-pressed="false">YouTube</button>
+          <button type="button" class="examples__tab" data-example-tab="vimeo" aria-pressed="false">Vimeo</button>
+          <button type="button" class="examples__tab" data-example-tab="html" aria-pressed="false">Inline HTML</button>
+          <button type="button" class="examples__tab" data-example-tab="iframe" aria-pressed="false">Iframe</button><button type="button" class="examples__tab" data-example-tab="map" aria-pressed="false">Google Maps</button><button type="button" class="examples__tab" data-example-tab="pdf" aria-pressed="false">PDF</button>
+          <button type="button" class="examples__tab" data-example-tab="js" aria-pressed="false">JavaScript</button>
+        </div>
+        <div class="examples__code">
+        <section class="examples__panel" data-example-panel="gallery">
+          <div class="examples__code-head"><span>Gallery / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- Same data-razorbox value = same gallery --&gt;
+&lt;a href=&quot;/images/01.jpg&quot; data-razorbox=&quot;trip&quot;
+   data-caption=&quot;Mountain view&quot;&gt;
+  &lt;img src=&quot;/images/01-thumb.jpg&quot; alt=&quot;Mountain view&quot;&gt;
+&lt;/a&gt;
+&lt;a href=&quot;/images/02.jpg&quot; data-razorbox=&quot;trip&quot;
+   data-caption=&quot;At the coast&quot;&gt;
+  &lt;img src=&quot;/images/02-thumb.jpg&quot; alt=&quot;At the coast&quot;&gt;
+&lt;/a&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="html5" hidden>
+          <div class="examples__code-head"><span>HTML5 video / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- Autoplay is requested; browsers may block sound --&gt;
+&lt;a href=&quot;/videos/intro.mp4&quot;
+   data-razorbox=&quot;videos&quot; data-type=&quot;video&quot;
+   data-poster=&quot;/images/poster.jpg&quot;
+   data-caption=&quot;An HTML5 video&quot;&gt;
+  Play video
+&lt;/a&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="youtube" hidden>
+          <div class="examples__code-head"><span>YouTube / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- Privacy Enhanced Mode: youtube-nocookie.com is enforced by default --&gt;
+&lt;a href=&quot;https://www.youtube.com/watch?v=lPYHfdapsEY&quot;
+   data-razorbox=&quot;videos&quot;
+   data-caption=&quot;YouTube video&quot;&gt;
+  Open YouTube video
+&lt;/a&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="vimeo" hidden>
+          <div class="examples__code-head"><span>Vimeo / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- Vimeo player URL includes dnt=1 by default --&gt;
+&lt;a href=&quot;https://vimeo.com/253905163&quot;
+   data-razorbox=&quot;videos&quot;
+   data-caption=&quot;Vimeo video&quot;&gt;
+  Open Vimeo video
+&lt;/a&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="html" hidden>
+          <div class="examples__code-head"><span>Inline HTML / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- Open a real DOM element and restore on close --&gt;
+&lt;a href=&quot;#contact-form&quot; data-razorbox=&quot;content&quot;
+   data-type=&quot;html&quot;&gt;Open contact form&lt;/a&gt;
+
+&lt;div id=&quot;contact-form&quot; hidden&gt;
+  &lt;h2&gt;Get in touch&lt;/h2&gt;
+  &lt;input type=&quot;email&quot; placeholder=&quot;Your email&quot;&gt;
+  &lt;button type=&quot;button&quot;&gt;Send&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="iframe" hidden>
+          <div class="examples__code-head"><span>Iframe / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- The destination must permit iframe embedding --&gt;
+&lt;a href=&quot;/contact.html&quot; data-razorbox=&quot;content&quot;
+   data-type=&quot;iframe&quot;
+   data-caption=&quot;Contact page&quot;&gt;
+  Open contact page
+&lt;/a&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="map" hidden>
+          <div class="examples__code-head"><span>Google Maps / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- Standard Google Maps links are auto-recognized. --&gt;
+&lt;a href=&quot;https://www.google.com/maps/search/?api=1&amp;amp;query=Empire+State+Building&amp;amp;query_place_id=ChIJaXQRs6lZwokRY6EFpJnhNNE&quot;
+   data-razorbox=&quot;places&quot; data-type=&quot;map&quot;
+   data-caption=&quot;Empire State Building&quot;&gt;
+  Open Google Maps
+&lt;/a&gt;
+
+&lt;!-- For a stable production embed, supply mapApiKey in JS
+     or data-embed-src with a URL from Maps &gt; Share &gt; Embed a map. --&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="pdf" hidden>
+          <div class="examples__code-head"><span>PDF / HTML</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>&lt;!-- A PDF URL ending with .pdf is recognized automatically. --&gt;
+&lt;a href=&quot;/documents/brochure.pdf&quot;
+   data-razorbox=&quot;documents&quot; data-caption=&quot;Our brochure&quot;&gt;
+  View PDF
+&lt;/a&gt;
+
+&lt;!-- Also supports data-type=&quot;pdf&quot; for URLs without .pdf suffix. --&gt;</code></pre>
+        </section>
+        <section class="examples__panel" data-example-panel="js" hidden>
+          <div class="examples__code-head"><span>JavaScript / main.js</span><button type="button" data-example-copy>Copy example</button></div>
+          <pre><code>import razorbox from &#x27;razorbox&#x27;
+import &#x27;razorbox/css&#x27;
+
+razorbox.bind(&#x27;[data-razorbox]&#x27;, {
+  transition: &#x27;fade&#x27;, // or &#x27;slide&#x27;
+  thumbnails: true,
+  thumbsOpen: false,
+  videoAutoplay: true,
+  videoMuted: false,
+  videoPrivacy: true,
+  wheelZoom: true, // Mouse wheel and Mac trackpad pinch
+  maxZoom: 8, // Gesture zoom; toolbar uses 2x
+  theme: &#x27;dark&#x27;,
+  locale: &#x27;auto&#x27; // Uses page language first
+})</code></pre>
+        </section>
+        </div>
+        <p class="examples__note">Use the same <code>data-razorbox</code> value to group different media together. External video autoplay with sound depends on browser policies.</p>
+      </section>
+      <section id="features" class="feature-section"><div class="section-heading"><div><p class="section-kicker">MADE FOR THE DETAILS</p><h2>All the essentials. Zero bloat.</h2></div></div><div class="features-grid"><article><span class="feature-icon">&#9655;</span><h3>Slideshow</h3><p>Play, pause, and choose your own interval.</p></article><article><span class="feature-icon">&#9638;</span><h3>Thumbnail rail</h3><p>Classic bottom thumbnail strip with a quick toggle.</p></article><article><span class="feature-icon">&#9974;</span><h3>Zoom + pan</h3><p>Click to zoom, pinch with a trackpad or scroll the wheel. Drag to pan; the zoom button resets to fit.</p></article><article><span class="feature-icon">&#9633;</span><h3>Fullscreen</h3><p>A distraction-free view using the native API.</p></article><article><span class="feature-icon">&#8594;</span><h3>Multiple galleries</h3><p>Group links using a single data attribute.</p></article><article><span class="feature-icon">&lt;/&gt;</span><h3>Plug-and-play</h3><p>One ES module and a separate stylesheet, for any modern bundler.</p></article></div></section>
+      <section class="options-section"><div><p class="section-kicker">PLAYGROUND</p><h2>Make it yours.</h2><p>Change the transition, appearance, or media options, then open the gallery again.</p></div><div class="toggle-group"><label class="option-select">Transition<select id="option-transition" aria-label="Gallery transition"><option value="fade" selected>Crossfade</option><option value="slide">Slide</option></select></label><label class="option-switch"><input id="option-thumbnails" type="checkbox" checked><span class="switch-track"></span> Thumbnails</label><label class="option-switch"><input id="option-loop" type="checkbox" checked><span class="switch-track"></span> Loop gallery</label><label class="option-switch"><input id="option-slideshow" type="checkbox" checked><span class="switch-track"></span> Slideshow</label><label class="option-switch"><input id="option-wheel" type="checkbox" checked><span class="switch-track"></span> Wheel / trackpad zoom</label><label class="option-select">Appearance<select id="option-theme" aria-label="Lightbox theme"><option value="dark" selected>Dark</option><option value="light">Light</option><option value="auto">System</option></select></label><label class="option-select">Language<select id="option-locale" aria-label="Gallery language"><option value="auto" selected>Auto (page language)</option><option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option></select></label><label class="option-switch"><input id="option-video-muted" type="checkbox"><span class="switch-track"></span> Muted autoplay</label></div></section>
+      <section id="documentation" class="usage-section"><div><p class="section-kicker">GET STARTED</p><h2>Two imports.<br>One beautiful gallery.</h2><p>razorbox publishes its JavaScript and stylesheet separately. No runtime-inserted styles, no jQuery.</p></div><div class="code-panel"><div class="code-header"><span class="code-dots"><i></i><i></i><i></i></span><span>main.js</span><button type="button" id="copy-code">Copy code</button></div><pre><code><span class="syntax-violet">import</span> razorbox <span class="syntax-violet">from</span> <span class="syntax-green">'razorbox'</span>
+<span class="syntax-violet">import</span> <span class="syntax-green">'razorbox/css'</span>
+
+<span class="syntax-blue">razorbox</span>.bind(<span class="syntax-green">'[data-razorbox]'</span>, {
+  thumbnails: <span class="syntax-violet">true</span>,
+  transition: <span class="syntax-green">'fade'</span>,
+  slideshow: <span class="syntax-violet">true</span>,
+  wheelZoom: <span class="syntax-violet">true</span>,
+  maxZoom: <span class="syntax-violet">8</span>,
+  videoAutoplay: <span class="syntax-violet">true</span>,
+  videoMuted: <span class="syntax-violet">false</span>,
+  theme: <span class="syntax-green">'dark'</span>,
+  locale: <span class="syntax-green">'auto'</span>
+})</code></pre></div></section>
+    </main>
+    <footer class="site-footer"><span class="footer-brand">razorbox<span>.</span></span><p>Made for galleries that deserve the spotlight.</p><a href="#top">Back to top &#8593;</a></footer>
+  </div>
+</body>
+</html>

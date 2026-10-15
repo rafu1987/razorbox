@@ -1,0 +1,488 @@
+// razorbox - standalone SCSS. Vite extracts it into a separate CSS asset.
+// Customize the Sass defaults with @use 'razorbox/scss' with (...), or override CSS custom properties.
+$razorbox-background: rgba(19, 19, 21, .93) !default;
+$razorbox-toolbar-background: rgba(30, 30, 32, .82) !default;
+$razorbox-thumbnails-background: #202023 !default;
+$razorbox-icon-color: rgba(255, 255, 255, .85) !default;
+$razorbox-button-size: 44px !default;
+$razorbox-thumbnails-height: 112px !default;
+$razorbox-transition: 250ms !default;
+$razorbox-content-duration: 300ms !default;
+
+// Fancybox 3 locks BODY scrolling and compensates the lost scrollbar width
+// using a body margin. Never paint a fake scrollbar: its OS appearance cannot
+// be reliably replicated and it causes flashing in dark/light system modes.
+body.razorbox-scroll-lock { overflow: hidden !important; }
+// Optional compensation for fixed-position site headers (not for the lightbox).
+.razorbox-had-scrollbar .razorbox-scrollbar-compensate { margin-right: var(--rb-scrollbar-width, 0px); }
+
+.razorbox {
+  --rb-background: rgba(19, 19, 21, .83);
+  --rb-backdrop-duration: 366ms;
+  --rb-toolbar-background: #{$razorbox-toolbar-background};
+  --rb-toolbar-hover: rgba(12, 12, 14, .98);
+  --rb-toolbar-inset: 10px;
+  --rb-thumbnails-background: #{$razorbox-thumbnails-background};
+  --rb-icon-color: #{$razorbox-icon-color};
+  --rb-text-color: #f8f8f8;
+  --rb-counter-background: transparent;
+  --rb-arrow-background: var(--rb-toolbar-background);
+  --rb-arrow-hover: var(--rb-toolbar-hover);
+  --rb-thumb-background: #424247;
+  --rb-thumb-border: #fff;
+  --rb-caption-color: #fff;
+  --rb-html-background: #fff;
+  --rb-html-color: #222;
+  --rb-media-background: #090909;
+  --rb-focus-color: #fff;
+  --rb-button-size: #{$razorbox-button-size};
+  --rb-thumbnails-height: #{$razorbox-thumbnails-height};
+  --rb-transition: #{$razorbox-transition};
+  --rb-content-duration: #{$razorbox-content-duration};
+
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: transparent;
+  color: var(--rb-text-color);
+  font: 400 14px/1.5 Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  // Open with a separate backdrop opacity transition; keep the existing
+  // dialog root fade solely for closing.
+  transition: none;
+}
+
+.razorbox[data-theme="light"] {
+  --rb-background: rgba(247, 247, 250, .83);
+  --rb-toolbar-background: rgba(228, 229, 234, .97);
+  --rb-toolbar-hover: #d3d5dd;
+  --rb-thumbnails-background: #edecf1;
+  --rb-icon-color: #34353c;
+  --rb-text-color: #222329;
+  --rb-counter-background: transparent;
+  --rb-arrow-background: var(--rb-toolbar-background);
+  --rb-arrow-hover: var(--rb-toolbar-hover);
+  --rb-thumb-background: #d1d1db;
+  --rb-thumb-border: #34353c;
+  --rb-caption-color: #282930;
+  --rb-html-background: #fff;
+  --rb-html-color: #24252a;
+  --rb-media-background: #e3e4e9;
+  --rb-focus-color: #303039;
+}
+
+@media (prefers-color-scheme: light) {
+  .razorbox[data-theme="auto"] {
+    --rb-background: rgba(247, 247, 250, .83);
+    --rb-toolbar-background: rgba(228, 229, 234, .97);
+    --rb-toolbar-hover: #d3d5dd;
+      --rb-thumbnails-background: #edecf1;
+    --rb-icon-color: #34353c;
+    --rb-text-color: #222329;
+    --rb-counter-background: transparent;
+    --rb-arrow-background: var(--rb-toolbar-background);
+    --rb-arrow-hover: var(--rb-toolbar-hover);
+    --rb-thumb-background: #d1d1db;
+    --rb-thumb-border: #34353c;
+      --rb-caption-color: #282930;
+    --rb-html-background: #fff;
+    --rb-html-color: #24252a;
+    --rb-media-background: #e3e4e9;
+    --rb-focus-color: #303039;
+  }
+}
+
+.razorbox,
+.razorbox *,
+.razorbox *::before,
+.razorbox *::after { box-sizing: border-box; }
+
+.razorbox[hidden],
+.razorbox [hidden] { display: none !important; }
+
+.razorbox.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+.razorbox.is-open.is-closing {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--rb-transition) ease;
+}
+.razorbox button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+.razorbox button:focus-visible { outline: 2px solid var(--rb-focus-color); outline-offset: -4px; }
+// The backdrop starts transparent and fades over the unchanged page.
+.razorbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--rb-background);
+  opacity: 0;
+  transition: opacity var(--rb-backdrop-duration) cubic-bezier(.47, 0, .74, .71);
+}
+.razorbox.is-open.is-entered .razorbox__backdrop { opacity: 1; transition-timing-function: cubic-bezier(.22, .61, .36, 1); }
+
+.razorbox__viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  transition: bottom var(--rb-transition) cubic-bezier(.2, .75, .25, 1);
+}
+
+.razorbox__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.razorbox.is-interactive-content .razorbox__stage { touch-action: pan-y; }
+
+.razorbox__slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 68px 74px 84px;
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  transition: opacity var(--rb-content-duration) ease, transform var(--rb-content-duration) cubic-bezier(.2, .75, .25, 1);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+// Like fancybox, photographic content may extend to the viewport edges,
+// underneath the inset translucent controls. Non-image content keeps padding.
+.razorbox__slide[data-rb-type="image"] { padding: 0; }
+
+// Crossfade: both full images remain stationary until the incoming image is ready.
+.razorbox__slide.is-active { opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; }
+.razorbox__slide.is-leaving { opacity: 0; pointer-events: none; }
+.razorbox--slide .razorbox__slide.from-right { transform: translate3d(100%, 0, 0); }
+.razorbox--slide .razorbox__slide.from-left { transform: translate3d(-100%, 0, 0); }
+.razorbox--slide .razorbox__slide.is-active { transform: translate3d(0, 0, 0); }
+.razorbox--slide .razorbox__slide.is-leaving.to-left { transform: translate3d(-100%, 0, 0); }
+.razorbox--slide .razorbox__slide.is-leaving.to-right { transform: translate3d(100%, 0, 0); }
+.razorbox--slide .razorbox__slide { opacity: 1; }
+
+.razorbox__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  flex: 0 1 auto;
+  object-fit: contain;
+  opacity: 0;
+  cursor: zoom-in;
+  transform: translate3d(var(--rb-x, 0px), var(--rb-y, 0px), 0) scale(var(--rb-zoom, 1));
+  transform-origin: 50% 50%;
+  transition: opacity 200ms ease, transform 180ms cubic-bezier(.2, .75, .25, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+}
+.razorbox__slide.is-loaded .razorbox__image { opacity: 1; }
+.razorbox.is-zoomed .razorbox__image { cursor: grab; }
+.razorbox.is-zoomed .razorbox__image:active { cursor: grabbing; }
+.razorbox__image.is-dragging { transition: none; }
+
+.razorbox__media {
+  position: relative;
+  width: min(100%, 1120px);
+  max-height: 100%;
+  min-height: 0;
+  flex: 0 1 auto;
+  aspect-ratio: 16 / 9;
+  background: var(--rb-media-background);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, .20);
+  pointer-events: auto;
+}
+.razorbox__video,
+.razorbox__iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--rb-media-background); }
+.razorbox__media--map,
+.razorbox__media--pdf {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 1100px);
+  height: min(80dvh, 840px);
+  aspect-ratio: auto;
+}
+.razorbox__media--map .razorbox__iframe,
+.razorbox__media--pdf .razorbox__iframe {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+.razorbox__attachment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 8px 20px;
+  background: var(--rb-toolbar-background);
+  color: var(--rb-icon-color);
+}
+.razorbox__external-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+.razorbox__external-link:hover { color: var(--rb-text-color); }
+.razorbox__media-fallback {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 32px;
+  color: var(--rb-text-color);
+  text-align: center;
+}
+.razorbox__error--video { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.razorbox__media--html {
+  width: min(100%, 760px);
+  aspect-ratio: auto;
+  max-height: 100%;
+  overflow: auto;
+  background: var(--rb-html-background);
+  color: var(--rb-html-color);
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.razorbox__html { padding: clamp(18px, 4vw, 40px); user-select: text; -webkit-user-select: text; }
+.razorbox__html :first-child { margin-top: 0; }
+.razorbox__html :last-child { margin-bottom: 0; }
+
+.razorbox__loader {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 34px; height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 2px solid rgba(128, 128, 128, .28);
+  border-top-color: var(--rb-icon-color);
+  border-radius: 50%;
+  animation: razorbox-spinner 750ms linear infinite;
+}
+.razorbox__error { max-width: 300px; padding: 18px 24px; border: 1px solid rgba(128,128,128,.25); background: var(--rb-toolbar-background); color: var(--rb-text-color); text-align: center; }
+
+// One flex header means even a five-button toolbar can never overlap the counter.
+.razorbox__header {
+  position: absolute;
+  top: 0; right: 0; left: 0;
+  z-index: 8;
+  padding: var(--rb-toolbar-inset) var(--rb-toolbar-inset) 22px;
+  background: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.razorbox__counter {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  height: var(--rb-button-size);
+  padding: 0 22px;
+  background: var(--rb-counter-background);
+  color: var(--rb-text-color);
+  font-size: 15px;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: auto;
+}
+.razorbox__toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  background: var(--rb-toolbar-background);
+  pointer-events: auto;
+}
+.razorbox__button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--rb-button-size);
+  width: var(--rb-button-size);
+  height: var(--rb-button-size);
+  margin: 0; padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--rb-icon-color) !important;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.razorbox__button:hover,
+.razorbox__button:focus-visible,
+.razorbox__button[aria-pressed="true"] { background: var(--rb-toolbar-hover); color: var(--rb-text-color) !important; }
+.razorbox__button:disabled { opacity: .3; cursor: default; }
+.razorbox__button svg,
+.razorbox__arrow svg { display: block; flex: none; width: 25px; height: 25px; pointer-events: none; }
+.razorbox__icon-pause,
+.razorbox__icon-zoom-out,
+.razorbox__icon-fullscreen-exit { display: none; }
+.razorbox.is-playing .razorbox__icon-play,
+.razorbox.is-zoomed .razorbox__icon-zoom-in,
+.razorbox.is-fullscreen .razorbox__icon-fullscreen { display: none; }
+.razorbox.is-playing .razorbox__icon-pause,
+.razorbox.is-zoomed .razorbox__icon-zoom-out,
+.razorbox.is-fullscreen .razorbox__icon-fullscreen-exit { display: block; }
+
+.razorbox__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--rb-arrow-background);
+  color: var(--rb-icon-color) !important;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 150ms ease;
+}
+.razorbox__arrow:hover { background: var(--rb-arrow-hover); }
+.razorbox__arrow:disabled { opacity: .3; cursor: default; }
+.razorbox__arrow--prev { left: 28px; }
+.razorbox__arrow--next { right: 28px; }
+.razorbox__arrow svg { width: 31px; height: 31px; stroke-width: 2; }
+
+// Caption is a flex child directly after the image/media. It reserves its
+// own height inside the viewport, rather than overlaying the image.
+.razorbox__caption {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  width: min(100%, 1120px);
+  max-height: min(35%, 240px);
+  overflow: auto;
+  padding: 12px 24px 16px;
+  background: none;
+  color: var(--rb-caption-color);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  overflow-wrap: anywhere;
+  pointer-events: auto;
+}
+.razorbox__caption a { color: inherit; }
+
+// Outer box clips all content; inner scroller supports touch momentum, trackpads and grab-drag.
+.razorbox__thumbs {
+  position: absolute;
+  right: 0; bottom: 0; left: 0;
+  z-index: 7;
+  width: 100%;
+  height: var(--rb-thumbnails-height);
+  overflow: hidden;
+  background: var(--rb-thumbnails-background);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, 100%, 0);
+  transition: opacity var(--rb-transition) ease, visibility var(--rb-transition) ease, transform var(--rb-transition) cubic-bezier(.2, .75, .25, 1);
+}
+.razorbox__thumbs-scroller {
+  width: 100%; height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-x;
+  cursor: grab;
+}
+.razorbox__thumbs-scroller::-webkit-scrollbar { display: none; }
+.razorbox__thumbs-scroller.is-dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+.razorbox__thumbs-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  padding: 10px 14px;
+}
+.razorbox__thumb {
+  position: relative;
+  display: block;
+  flex: 0 0 110px;
+  width: 110px;
+  height: 86px;
+  margin: 0; padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 0;
+  background: var(--rb-thumb-background);
+  cursor: pointer;
+  opacity: .58;
+  transition: opacity 150ms ease, border-color 150ms ease;
+}
+.razorbox__thumb:hover,
+.razorbox__thumb.is-current { border-color: var(--rb-thumb-border); opacity: 1; }
+.razorbox__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.razorbox__thumb-play { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; pointer-events: none; color: #fff; background: rgba(0,0,0,.15); }
+.razorbox__thumb-play svg { width: 30px; height: 30px; padding: 4px; border-radius: 50%; background: rgba(0,0,0,.58); }
+.razorbox.is-thumbs-open .razorbox__viewport { bottom: var(--rb-thumbnails-height); }
+.razorbox.is-thumbs-open .razorbox__thumbs { opacity: 1; visibility: visible; pointer-events: auto; transform: translate3d(0, 0, 0); }
+
+.razorbox__sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@keyframes razorbox-spinner { to { transform: rotate(360deg); } }
+
+@media (max-width: 700px) {
+  .razorbox { --rb-button-size: 44px; --rb-thumbnails-height: 96px; --rb-toolbar-inset: 4px; }
+  // Let mobile photos fill the width, with navigation arrows overlaid on the photo itself.
+  .razorbox__slide { padding: 54px 0 77px; }
+  .razorbox__slide[data-rb-type="image"] { padding: 0; }
+  .razorbox__counter { padding: 0 9px; font-size: 14px; }
+  .razorbox__button svg { width: 23px; height: 23px; }
+  .razorbox__arrow { width: 60px; height: 60px; }
+  .razorbox__arrow--prev { left: 12px; }
+  .razorbox__arrow--next { right: 12px; }
+  .razorbox__arrow svg { width: 34px; height: 34px; }
+  .razorbox__caption { padding: 10px 16px 14px; font-size: 13px; }
+  .razorbox__thumbs-track { gap: 6px; padding: 8px 10px; }
+  .razorbox__thumb { flex-basis: 93px; width: 93px; height: 78px; }
+  .razorbox__media--html { width: calc(100% - 28px); }
+  .razorbox__media--map,
+  .razorbox__media--pdf { width: calc(100% - 24px); height: min(76dvh, 700px); }
+}
+
+@media (max-width: 355px) {
+  .razorbox { --rb-button-size: 40px; --rb-toolbar-inset: 3px; }
+  .razorbox__counter { padding: 0 9px; font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .razorbox,
+  .razorbox *,
+  .razorbox *::before,
+  .razorbox *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
