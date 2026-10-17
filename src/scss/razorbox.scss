@@ -51,7 +51,7 @@ body.razorbox-scroll-lock { overflow: hidden !important; }
   overflow: hidden;
   background: transparent;
   color: var(--rb-text-color);
-  font: 400 14px/1.5 Arial, Helvetica, sans-serif;
+  font: 400 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Noto Sans, Liberation Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   -webkit-font-smoothing: antialiased;
   opacity: 0;
   visibility: hidden;
@@ -259,6 +259,35 @@ body.razorbox-scroll-lock { overflow: hidden !important; }
   color: var(--rb-text-color);
   text-align: center;
 }
+// Shown over YouTube/Vimeo only when the browser forced muted playback.
+.razorbox__unmute {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 14px 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rb-toolbar-background);
+  color: var(--rb-text-color);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+  transition: background-color 150ms ease;
+}
+.razorbox__unmute[hidden] { display: none; }
+.razorbox__unmute:hover,
+.razorbox__unmute:focus-visible { background: var(--rb-toolbar-hover); }
+.razorbox__unmute:focus-visible { outline: 2px solid var(--rb-focus-color); outline-offset: 2px; }
+.razorbox__unmute svg { flex: none; width: 22px; height: 22px; }
 .razorbox__error--video { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .razorbox__media--html {
   width: min(100%, 760px);

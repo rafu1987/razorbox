@@ -79,7 +79,7 @@ Links sharing the same `data-razorbox` value form a gallery. Captions appear **b
 <a href="https://vimeo.com/253905163" data-razorbox> Vimeo </a>
 ```
 
-Autoplay is requested by default (with `videoMuted: false`), but browsers may block autoplay with sound. Videos stop when the slide changes or the lightbox closes. `videoPrivacy: true` uses `youtube-nocookie.com` and Vimeo's `dnt=1` option. These do not replace consent management for third-party content.
+Autoplay is requested by default (with `videoMuted: false`), but browsers may block autoplay with sound. When that happens (often on iOS), Vimeo starts muted by itself and, with `videoMutedFallback: true` (default), YouTube is started muted too instead of showing its play button. A "Turn on sound" button (label key `unmute`) is then shown over the video; one tap enables sound. Videos stop when the slide changes or the lightbox closes. `videoPrivacy: true` uses `youtube-nocookie.com` and Vimeo's `dnt=1` option. These do not replace consent management for third-party content.
 
 ### Inline HTML and iframes
 
@@ -119,6 +119,7 @@ const lightbox = razorbox.bind('[data-razorbox]', {
   transitionDuration: 300,
   videoAutoplay: true,
   videoMuted: false,
+  videoMutedFallback: true,
   videoPrivacy: true,
   captionHtml: false,
   theme: 'dark',

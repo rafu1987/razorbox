@@ -45,6 +45,8 @@ export interface razorboxOptions {
   transitionDuration?: number;
   videoAutoplay?: boolean;
   videoMuted?: boolean;
+  /** true (default): if the browser refuses audible YouTube autoplay, start the video muted instead of showing the play button. */
+  videoMutedFallback?: boolean;
   /** true (default): YouTube privacy-enhanced embed domain and Vimeo dnt=1. */
   videoPrivacy?: boolean;
   /** Google Maps Embed API key (prefer a referrer-restricted key for production). */

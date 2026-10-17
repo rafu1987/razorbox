@@ -22,6 +22,7 @@ const DEFAULT_OPTIONS = Object.freeze({
   transitionDuration: 300,
   videoAutoplay: true,
   videoMuted: false,
+  videoMutedFallback: true,
   videoPrivacy: true,
   theme: 'dark',
   locale: 'auto',
@@ -47,7 +48,8 @@ const LOCALES = Object.freeze({
     embeddedPage: 'Embedded page', youtubeVideo: 'YouTube video', vimeoVideo: 'Vimeo video',
     status: '{type} {number} of {total}. {alt}',
     openMap: 'Open in Google Maps', openPdf: 'Open PDF in a new tab',
-    mapUnavailable: 'The map preview is unavailable. You can open it in Google Maps.'
+    mapUnavailable: 'The map preview is unavailable. You can open it in Google Maps.',
+    unmute: 'Turn on sound'
   },
   de: {
     gallery: 'Mediengalerie', controls: 'Galerie-Steuerelemente', thumbnails: 'Galerie-Vorschaubilder',
@@ -61,7 +63,8 @@ const LOCALES = Object.freeze({
     embeddedPage: 'Eingebettete Seite', youtubeVideo: 'YouTube-Video', vimeoVideo: 'Vimeo-Video',
     status: '{type} {number} von {total}. {alt}',
     openMap: 'In Google Maps öffnen', openPdf: 'PDF in neuem Tab öffnen',
-    mapUnavailable: 'Kartenvorschau nicht verfügbar. Karte in Google Maps öffnen.'
+    mapUnavailable: 'Kartenvorschau nicht verfügbar. Karte in Google Maps öffnen.',
+    unmute: 'Ton einschalten'
   },
   fr: {
     gallery: 'Galerie multimédia', controls: 'Commandes de la galerie', thumbnails: 'Miniatures de la galerie',
@@ -75,7 +78,8 @@ const LOCALES = Object.freeze({
     embeddedPage: 'Page intégrée', youtubeVideo: 'Vidéo YouTube', vimeoVideo: 'Vidéo Vimeo',
     status: '{type} {number} sur {total}. {alt}',
     openMap: 'Ouvrir dans Google Maps', openPdf: 'Ouvrir le PDF dans un nouvel onglet',
-    mapUnavailable: 'Aperçu de la carte indisponible. Vous pouvez l’ouvrir dans Google Maps.'
+    mapUnavailable: 'Aperçu de la carte indisponible. Vous pouvez l’ouvrir dans Google Maps.',
+    unmute: 'Activer le son'
   }
 });
 
@@ -104,6 +108,7 @@ const ICONS = {
   fullscreenExit: '<path d="M4 9h5V4M20 9h-5V4M15 20v-5h5M4 15h5v5"/>',
   thumbs: '<rect x="2.5" y="3.5" width="19" height="14" rx="1.4"/><path d="M6 21h1M11.5 21h1M17 21h1"/>',
   html: '<path d="m8 7-4 5 4 5M16 7l4 5-4 5M14 5l-4 14"/>',
+  unmute: '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/>',
   iframe: '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M6 6.5h.1M9 6.5h.1"/>'
 };
 
@@ -127,6 +132,17 @@ function contentDuration(value) {
 const PROVIDER_TYPES = new Set(['youtube', 'vimeo']);
 const VIDEO_EXTENSIONS = /\.(?:mp4|webm|ogv|ogg|m4v)(?:[?#]|$)/i;
 const PDF_EXTENSION = /\.pdf(?:[?#]|$)/i;
+
+// Connecting to the player host as soon as the user touches or hovers a
+// trigger lets the player become ready sooner, which matters on iOS: its play
+// command must arrive while the tap still counts. Only the player document
+// request can reuse this connection; the player's own subresources live in a
+// separate network partition.
+const PROVIDER_ORIGINS = {
+  youtube: privacy => [privacy ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'],
+  vimeo: () => ['https://player.vimeo.com']
+};
+const preconnected = new Set();
 
 function safeFrameUrl(src) {
   if (!src) return '';
@@ -306,8 +322,12 @@ export class razorbox {
     this._onThumbPointerUp = this._onThumbPointerUp.bind(this);
     this._onThumbWheel = this._onThumbWheel.bind(this);
     this._onThumbClickCapture = this._onThumbClickCapture.bind(this);
+    this._onTriggerIntent = this._onTriggerIntent.bind(this);
 
     this._triggerRoot.addEventListener('click', this._onTriggerClick);
+    this._triggerRoot.addEventListener('pointerdown', this._onTriggerIntent, { passive: true });
+    this._triggerRoot.addEventListener('mouseover', this._onTriggerIntent, { passive: true });
+    this._triggerRoot.addEventListener('focusin', this._onTriggerIntent);
   }
 
   get isOpen() { return this._isOpen; }
@@ -356,6 +376,26 @@ export class razorbox {
       caption: element.getAttribute('data-caption') ?? '',
       alt: element.getAttribute('data-alt') ?? preview?.alt ?? ''
     });
+  }
+
+  _preconnect(item) {
+    if (!PROVIDER_TYPES.has(item?.type) || !this.options.videoAutoplay) return;
+    for (const origin of PROVIDER_ORIGINS[item.type](this.options.videoPrivacy !== false)) {
+      if (preconnected.has(origin)) continue;
+      preconnected.add(origin);
+      const link = document.createElement('link');
+      link.rel = 'preconnect';
+      link.href = origin;
+      document.head.append(link);
+    }
+  }
+
+  _onTriggerIntent(event) {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest(this.selector);
+    if (!trigger || !this._triggerRoot.contains(trigger)) return;
+    const src = trigger.getAttribute('data-src') || trigger.getAttribute('href');
+    if (src && providerReference(src)) this._preconnect(this._itemFromElement(trigger));
   }
 
   _onTriggerClick(event) {
@@ -644,30 +684,250 @@ export class razorbox {
     scroller.scrollLeft += event.deltaY;
   }
 
+  // Build embed URLs using the Fancybox 6.1.15 Carousel Video plugin's
+  // player parameters. Playback is started through the player APIs, NOT via
+  // autoplay=1 in the iframe URL. Separate CSS is still supplied by the app.
   _embedUrl(item) {
     const reference = providerReference(item.src);
     if (!reference || reference.type !== item.type) return '';
-    // A normal watch/embed URL never dictates the embed host. Privacy mode
-    // forces YouTube's official privacy-enhanced host and Vimeo's DNT mode.
+
     const privacy = this.options.videoPrivacy !== false;
     const src = reference.type === 'youtube'
-      ? new URL(`https://www.${privacy ? 'youtube-nocookie' : 'youtube'}.com/embed/${reference.id}`)
+      ? new URL(`https://www.youtube${privacy ? '-nocookie' : ''}.com/embed/${reference.id}`)
       : new URL(`https://player.vimeo.com/video/${reference.id}`);
-    if (reference.type === 'vimeo') {
-      if (reference.hash) src.searchParams.set('h', reference.hash);
-      if (privacy) src.searchParams.set('dnt', '1');
-    }
-    src.searchParams.set('autoplay', this.options.videoAutoplay ? '1' : '0');
-    src.searchParams.set(reference.type === 'youtube' ? 'mute' : 'muted', this.options.videoMuted ? '1' : '0');
-    src.searchParams.set('playsinline', '1');
+
     if (reference.type === 'youtube') {
-      src.searchParams.set('rel', '0');
+      // Fancybox preserves the original watch URL's v parameter. It is safe to
+      // keep and matches its generated embed URLs for YouTube watch links.
+      src.searchParams.set('v', reference.id);
+      src.searchParams.set('controls', '1');
       src.searchParams.set('enablejsapi', '1');
-      if (/^https?:$/.test(location.protocol)) src.searchParams.set('origin', location.origin);
+      src.searchParams.set('nocookie', privacy ? '1' : '0');
+      src.searchParams.set('rel', '0');
+      src.searchParams.set('fs', '1');
+      // Required on iOS for inline (and therefore muted) playback.
+      src.searchParams.set('playsinline', '1');
+      if (this.options.videoMuted) src.searchParams.set('mute', '1');
+      // Deliberately no origin= parameter. Fancybox 6 does not add one, and
+      // it can cause the YouTube IFrame API to reject non-standard dev hosts.
+    } else {
+      if (reference.hash) src.searchParams.set('h', reference.hash);
+      src.searchParams.set('byline', '1');
+      src.searchParams.set('color', '00adef');
+      src.searchParams.set('controls', '1');
+      src.searchParams.set('dnt', privacy ? '1' : '0');
+      src.searchParams.set('muted', this.options.videoMuted ? '1' : '0');
     }
+
     return src.toString();
   }
 
+  // Fancybox 6.1.15 Carousel Video protocol:
+  // YouTube: iframe load -> listening -> onReady -> playVideo
+  // Vimeo:   ready -> play
+  //
+  // The play command is deliberately sent from a 250ms timer chain that is
+  // started synchronously inside the user's click/tap/key handler, never from
+  // the player's message event. WebKit (all iOS browsers) forwards the user
+  // gesture through short timers into postMessage, which is what allows the
+  // provider player to start WITH sound on mobile. Sending play from the
+  // message handler carries no gesture: Vimeo then falls back to muted
+  // playback and YouTube does not start at all.
+  _autoplayProvider(frame, slide) {
+    const provider = frame.dataset.rbProvider;
+    if (!PROVIDER_TYPES.has(provider) || !this.options.videoAutoplay) return;
+
+    frame.id = `razorbox-${provider}-${++instanceSequence}`;
+
+    let ready = false;
+    let disposed = false;
+    let pollingTimer = null;
+
+    const active = () => !disposed && this._isOpen && this._slide === slide && frame.isConnected;
+    const send = message => {
+      if (!active()) return;
+      // Fancybox posts to '*' because YouTube's API can respond from
+      // youtube.com even if the iframe originated at youtube-nocookie.com.
+      frame.contentWindow?.postMessage(JSON.stringify(message), '*');
+    };
+
+    const cleanup = () => {
+      disposed = true;
+      clearTimeout(pollingTimer);
+      clearTimeout(recheckTimer);
+      unmuteButton?.remove();
+      frame.removeEventListener('load', onLoad);
+      window.removeEventListener('message', onMessage);
+      if (slide._rbProviderCleanup === cleanup) slide._rbProviderCleanup = null;
+    };
+
+    const requestListening = () => {
+      if (provider !== 'youtube' || !active() || ready) return;
+      send({ event: 'listening', id: frame.id });
+    };
+
+    // When the browser refuses audible playback (iOS, once the tap no longer
+    // counts by the time the player is ready), Vimeo silently falls back to
+    // muted playback. YouTube just shows its play button, so it is started
+    // muted. Either way an overlay button offers sound: its tap is a fresh
+    // user gesture, which the unmute command carries into the player.
+    const verifySound = provider === 'vimeo' && !this.options.videoMuted;
+    const youtubeFallback = provider === 'youtube' && !this.options.videoMuted && this.options.videoMutedFallback !== false;
+    let youtubeState = null;
+    let muted = null;
+    let played = false;
+    let checks = 0;
+    let unmuteButton = null;
+    let recheckTimer = null;
+
+    const hideUnmute = () => {
+      if (unmuteButton) unmuteButton.hidden = true;
+    };
+    const showUnmute = () => {
+      if (!active()) return;
+      if (!unmuteButton) {
+        unmuteButton = document.createElement('button');
+        unmuteButton.type = 'button';
+        unmuteButton.className = 'razorbox__unmute';
+        unmuteButton.innerHTML = `${icon('unmute')}<span>${this._t('unmute')}</span>`;
+        unmuteButton.addEventListener('click', onUnmuteClick);
+        frame.after(unmuteButton);
+        // Learn about unmuting through Vimeo's own controls as well.
+        if (provider === 'vimeo') send({ method: 'addEventListener', value: 'volumechange' });
+      }
+      unmuteButton.hidden = false;
+    };
+    // Must run synchronously inside the click so the gesture reaches the player.
+    const onUnmuteClick = event => {
+      event.stopPropagation();
+      if (provider === 'youtube') {
+        send({ event: 'command', func: 'unMute', args: [] });
+        send({ event: 'command', func: 'setVolume', args: [100] });
+        send({ event: 'command', func: 'playVideo', args: [] });
+      } else {
+        send({ method: 'setMuted', value: false });
+        send({ method: 'setVolume', value: 1 });
+        send({ method: 'play', value: 'true' });
+      }
+      hideUnmute();
+      frame.focus({ preventScroll: true });
+      // If sound was refused, the player stays muted or (YouTube) pauses.
+      // Return to muted playback and offer the button again.
+      clearTimeout(recheckTimer);
+      muted = null;
+      recheckTimer = setTimeout(() => {
+        if (provider === 'vimeo') send({ method: 'getMuted' });
+        recheckTimer = setTimeout(() => {
+          if (provider === 'youtube' && youtubeState === 2) {
+            send({ event: 'command', func: 'mute', args: [] });
+            send({ event: 'command', func: 'playVideo', args: [] });
+            muted = true;
+          }
+          if (muted === true) showUnmute();
+        }, 400);
+      }, 600);
+    };
+
+    // Vimeo first plays unmuted and only mutes itself once the browser has
+    // refused sound, so "playing and unmuted" must hold for several fresh
+    // readings (~1s) before it counts as success.
+    let stable = 0;
+    let paused = null;
+    const verifyVimeo = () => {
+      const state = { paused, muted };
+      paused = null;
+      muted = null;
+      if (state.paused === false && state.muted === false) {
+        if (++stable >= 4) return true;
+      } else if (state.paused !== null || state.muted !== null) {
+        stable = 0;
+      }
+      if (state.paused === false && state.muted === true) {
+        muted = true;
+        showUnmute();
+        return true;
+      }
+      send({ method: 'getPaused' });
+      send({ method: 'getMuted' });
+      return ++checks > 40;
+    };
+
+    // Playing (1) or buffering (3) means playback was accepted.
+    const verifyYoutube = () => {
+      if (youtubeState === 1 || youtubeState === 3) return true;
+      if (++checks < 6) return false;
+      send({ event: 'command', func: 'mute', args: [] });
+      send({ event: 'command', func: 'playVideo', args: [] });
+      muted = true;
+      showUnmute();
+      return true;
+    };
+
+    // Runs in the (forwarded) gesture context of the opening interaction.
+    const poll = () => {
+      pollingTimer = null;
+      if (!active()) return;
+      if (ready && !played) {
+        played = true;
+        frame.dataset.rbReady = 'true';
+        send(provider === 'youtube'
+          ? { event: 'command', func: 'playVideo' }
+          : { method: 'play', value: 'true' });
+        if (!verifySound && !youtubeFallback) return;
+      } else if (played) {
+        if (provider === 'youtube' ? verifyYoutube() : verifyVimeo()) return;
+      } else {
+        requestListening();
+      }
+      pollingTimer = setTimeout(poll, 250);
+    };
+
+    const onMessage = event => {
+      if (!active()) return;
+      if (provider === 'youtube') {
+        if (!/^https:\/\/(?:www\.)?youtube(?:-nocookie)?\.com$/.test(event.origin)) return;
+      } else if (event.origin !== 'https://player.vimeo.com') {
+        return;
+      }
+
+      let data;
+      try {
+        data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+      } catch { return; }
+      if (!data || typeof data !== 'object') return;
+
+      // Match the active iframe by its window, or (like Fancybox) by the id
+      // YouTube echoes back from the listening message.
+      const fromFrame = event.source === frame.contentWindow || (provider === 'youtube' && data.id === frame.id);
+      if (!fromFrame) return;
+
+      // Only flag readiness here; the poller sends the play command.
+      // A Vimeo ping response is NOT the same thing as player readiness.
+      if ((provider === 'youtube' && data.event === 'onReady') || (provider === 'vimeo' && data.event === 'ready')) {
+        ready = true;
+      } else if (provider === 'youtube' && data.event === 'infoDelivery' && data.info && typeof data.info === 'object') {
+        if (typeof data.info.playerState === 'number') youtubeState = data.info.playerState;
+        if (typeof data.info.muted === 'boolean') muted = data.info.muted;
+      } else if (provider === 'youtube' && data.event === 'onStateChange' && typeof data.info === 'number') {
+        youtubeState = data.info;
+      } else if (provider === 'vimeo' && data.method === 'getPaused') {
+        paused = Boolean(data.value);
+      } else if (provider === 'vimeo' && data.method === 'getMuted') {
+        muted = Boolean(data.value);
+      } else if (provider === 'vimeo' && data.event === 'volumechange') {
+        send({ method: 'getMuted' });
+      }
+      // Hide the button once sound is on, also via the player's own controls.
+      if (muted === false) hideUnmute();
+    };
+
+    const onLoad = () => requestListening();
+    window.addEventListener('message', onMessage);
+    frame.addEventListener('load', onLoad);
+    slide._rbProviderCleanup = cleanup;
+    // Must be scheduled synchronously from the user's gesture.
+    pollingTimer = setTimeout(poll, 250);
+  }
 
   _mapEmbedUrl(item) {
     const original = googleMapsUrl(item.src);
@@ -706,6 +966,7 @@ export class razorbox {
   }
 
   _pauseSlideMedia(slide) {
+    slide?._rbProviderCleanup?.();
     const media = slide?.querySelector('.razorbox__video, .razorbox__iframe');
     if (!media) return;
     if (media.tagName === 'VIDEO') {
@@ -750,6 +1011,13 @@ export class razorbox {
 
   _activateSlide(slide, outgoing, sequence, initial) {
     if (sequence !== this._renderSequence || !this._isOpen || !slide.isConnected) return;
+    // Load iframes synchronously, outside requestAnimationFrame: provider
+    // autoplay with sound depends on staying in the user's gesture call stack.
+    const frame = slide.querySelector('.razorbox__iframe');
+    if (frame) {
+      if (PROVIDER_TYPES.has(frame.dataset.rbProvider)) this._autoplayProvider(frame, slide);
+      frame.src = frame.dataset.rbEmbedSrc;
+    }
     const activate = () => {
       if (sequence !== this._renderSequence || !this._isOpen || !slide.isConnected) return;
       this._visibleSlide = slide;
@@ -761,10 +1029,7 @@ export class razorbox {
         const duration = contentDuration(this.options.transitionDuration);
         this._slideTimer = setTimeout(() => this._removeSlide(outgoing), duration + 60);
       }
-      if (slide.querySelector('.razorbox__iframe')) {
-        const frame = slide.querySelector('.razorbox__iframe');
-        frame.src = frame.dataset.rbEmbedSrc;
-      } else if (slide.querySelector('.razorbox__video') && this.options.videoAutoplay) {
+      if (!frame && slide.querySelector('.razorbox__video') && this.options.videoAutoplay) {
         const video = slide.querySelector('.razorbox__video');
         void video.play().catch(() => { /* Browser can block audible autoplay. */ });
       }
@@ -904,9 +1169,15 @@ export class razorbox {
           const frame = document.createElement('iframe');
           frame.className = 'razorbox__iframe';
           frame.title = item.alt || this._t(isPdf ? 'pdf' : isMap ? 'map' : item.type === 'iframe' ? 'embeddedPage' : item.type === 'youtube' ? 'youtubeVideo' : 'vimeoVideo');
-          frame.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
+          frame.allow = item.type === 'youtube'
+            ? 'accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share'
+            : 'autoplay; fullscreen; encrypted-media; picture-in-picture';
           frame.allowFullscreen = true;
           frame.referrerPolicy = 'strict-origin-when-cross-origin';
+          if (PROVIDER_TYPES.has(item.type)) {
+            frame.setAttribute('credentialless', '');
+            frame.setAttribute('scrolling', 'no');
+          }
           frame.dataset.rbProvider = item.type;
           frame.dataset.rbEmbedSrc = embedSrc;
           wrapper.append(frame);
@@ -1421,6 +1692,9 @@ export class razorbox {
     clearTimeout(this._slideTimer);
     clearTimeout(this._wheelSettledTimer);
     this._triggerRoot.removeEventListener('click', this._onTriggerClick);
+    this._triggerRoot.removeEventListener('pointerdown', this._onTriggerIntent);
+    this._triggerRoot.removeEventListener('mouseover', this._onTriggerIntent);
+    this._triggerRoot.removeEventListener('focusin', this._onTriggerIntent);
     this._ui?.remove();
     this._ui = null;
     this._preloadCache.clear();
