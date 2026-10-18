@@ -30,6 +30,11 @@ yarn dev       # demo page with hot reload at /demo.html
 Keep logic that does not need the DOM in the pure modules so it can be unit
 tested.
 
+Write the SCSS without vendor prefixes: Autoprefixer (`postcss.config.mjs`)
+adds them in the build for the `browserslist` in `package.json`. Only
+non-standard properties without an unprefixed version, such as
+`-webkit-tap-highlight-color`, belong in the source.
+
 ## Checks
 
 | Command | What it does |

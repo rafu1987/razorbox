@@ -72,6 +72,8 @@ body {
   // Open with a separate backdrop opacity transition; keep the existing
   // dialog root fade solely for closing.
   transition: none;
+
+  // Non-standard (WebKit only); autoprefixer cannot add these, so they stay.
   -webkit-font-smoothing: antialiased;
 
   &[data-theme="light"] {
@@ -147,6 +149,8 @@ body {
   button {
     font: inherit;
     color: inherit;
+
+    // Non-standard (mobile WebKit); no unprefixed property exists.
     -webkit-tap-highlight-color: transparent;
 
     &:focus-visible {
@@ -302,6 +306,8 @@ body {
     transform: translate3d(var(--rb-x, 0), var(--rb-y, 0), 0) scale(var(--rb-zoom, 1));
     transform-origin: 50% 50%;
     transition: opacity 200ms ease, transform 180ms cubic-bezier(.2, .75, .25, 1);
+
+    // Non-standard (WebKit); no unprefixed property exists.
     -webkit-user-drag: none;
     will-change: transform;
   }
@@ -728,8 +734,8 @@ body {
       scrollbar-width: none;
       touch-action: pan-x;
       cursor: grab;
-      -ms-overflow-style: none;
 
+      // No standard equivalent; scrollbar-width covers browsers that support it.
       &::-webkit-scrollbar {
         display: none;
       }

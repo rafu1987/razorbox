@@ -30,6 +30,8 @@ The package contains both versions, with CSS always separate from JS:
 - `dist/razorbox.min.js` and `dist/razorbox.min.css`: minified
 - `src/scss/razorbox.scss`: SCSS source, exported as `@rafu1987/razorbox/scss`
 
+The CSS in `dist/` is already vendor-prefixed by [Autoprefixer](https://github.com/postcss/autoprefixer) for the [`defaults`](https://browsersl.ist/#q=defaults) browser list. The SCSS source is not: if you compile it yourself, run Autoprefixer in your build (for example via `postcss.config.js`), otherwise Safari ignores properties such as `user-select`.
+
 The usual imports will be optimized by your application build:
 
 ```javascript

@@ -142,7 +142,9 @@ body.razorbox-scroll-lock {
   isolation: isolate;
   overflow: hidden;
   touch-action: none;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 .razorbox.is-interactive-content .razorbox__stage {
   touch-action: pan-y;
@@ -216,9 +218,12 @@ body.razorbox-scroll-lock {
   height: auto;
   max-height: 100%;
   min-height: 0;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   cursor: zoom-in;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   opacity: 0;
   transform: translate3d(var(--rb-x, 0), var(--rb-y, 0), 0) scale(var(--rb-zoom, 1));
   transform-origin: 50% 50%;
@@ -356,7 +361,9 @@ body.razorbox-scroll-lock {
 }
 .razorbox__html {
   padding: clamp(18px, 4vw, 40px);
-  user-select: text;
+  -webkit-user-select: text;
+     -moz-user-select: text;
+          user-select: text;
 }
 .razorbox__html :first-child {
   margin-top: 0;
@@ -408,7 +415,9 @@ body.razorbox-scroll-lock {
   letter-spacing: 0.02em;
   white-space: nowrap;
   pointer-events: auto;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   background: var(--rb-counter-background);
   font-variant-numeric: tabular-nums;
 }
@@ -552,7 +561,6 @@ body.razorbox-scroll-lock {
   scrollbar-width: none;
   touch-action: pan-x;
   cursor: grab;
-  -ms-overflow-style: none;
 }
 .razorbox__thumbs-scroller::-webkit-scrollbar {
   display: none;
@@ -560,7 +568,9 @@ body.razorbox-scroll-lock {
 .razorbox__thumbs-scroller.is-dragging {
   scroll-behavior: auto;
   cursor: grabbing;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 .razorbox__thumbs-track {
   position: relative;
@@ -568,6 +578,7 @@ body.razorbox-scroll-lock {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  width: -moz-max-content;
   width: max-content;
   min-width: 100%;
   height: 100%;
@@ -597,7 +608,8 @@ body.razorbox-scroll-lock {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   pointer-events: none;
 }
 .razorbox__thumb-play {
