@@ -1,7 +1,6 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-let instanceSequence = 0;
 const DEFAULT_OPTIONS = Object.freeze({
   loop: true,
   thumbnails: true,
@@ -141,6 +140,9 @@ function detectLocale(preferred = "auto") {
   const languages = [...navigator.languages || [], navigator.language];
   return languages.map(supportedLocale).find(Boolean) || "en";
 }
+function formatMessage(value, params = {}) {
+  return String(value).replace(/\{(\w+)\}/g, (full, name) => params[name] === void 0 ? full : String(params[name]));
+}
 const ICONS = {
   close: '<path d="M6 6l12 12M18 6L6 18"/>',
   next: '<path d="m9 5 7 7-7 7"/>',
@@ -176,7 +178,6 @@ const PROVIDER_ORIGINS = {
   youtube: (privacy) => [privacy ? "https://www.youtube-nocookie.com" : "https://www.youtube.com"],
   vimeo: () => ["https://player.vimeo.com"]
 };
-const preconnected = /* @__PURE__ */ new Set();
 function safeFrameUrl(src) {
   if (!src) return "";
   try {
@@ -275,6 +276,53 @@ function normalizeItem(item) {
     alt: String(item.alt ?? "")
   };
 }
+function providerEmbedUrl(item, { privacy = true, muted = false } = {}) {
+  const reference = providerReference(item.src);
+  if (!reference || reference.type !== item.type) return "";
+  const src = reference.type === "youtube" ? new URL(`https://www.youtube${privacy ? "-nocookie" : ""}.com/embed/${reference.id}`) : new URL(`https://player.vimeo.com/video/${reference.id}`);
+  if (reference.type === "youtube") {
+    src.searchParams.set("v", reference.id);
+    src.searchParams.set("controls", "1");
+    src.searchParams.set("enablejsapi", "1");
+    src.searchParams.set("nocookie", privacy ? "1" : "0");
+    src.searchParams.set("rel", "0");
+    src.searchParams.set("fs", "1");
+    src.searchParams.set("playsinline", "1");
+    if (muted) src.searchParams.set("mute", "1");
+  } else {
+    if (reference.hash) src.searchParams.set("h", reference.hash);
+    src.searchParams.set("byline", "1");
+    src.searchParams.set("color", "00adef");
+    src.searchParams.set("controls", "1");
+    src.searchParams.set("dnt", privacy ? "1" : "0");
+    src.searchParams.set("muted", muted ? "1" : "0");
+  }
+  return src.toString();
+}
+function mapEmbedUrl(item, { apiKey = "", locale = "en" } = {}) {
+  const original = googleMapsUrl(item.src);
+  if (!original) return "";
+  const provided = googleMapsUrl(item.embedSrc);
+  if (provided?.pathname.startsWith("/maps/embed")) return provided.href;
+  if (original.pathname.startsWith("/maps/embed")) return original.href;
+  const query = mapQuery(original);
+  if (!query) return "";
+  if (apiKey) {
+    const embed2 = new URL("https://www.google.com/maps/embed/v1/place");
+    embed2.searchParams.set("key", String(apiKey));
+    const placeId = original.searchParams.get("query_place_id");
+    embed2.searchParams.set("q", placeId ? `place_id:${placeId}` : query);
+    embed2.searchParams.set("language", locale);
+    return embed2.href;
+  }
+  const embed = new URL("https://maps.google.com/maps");
+  embed.searchParams.set("q", query);
+  embed.searchParams.set("output", "embed");
+  embed.searchParams.set("hl", locale);
+  return embed.href;
+}
+let instanceSequence = 0;
+const preconnected = /* @__PURE__ */ new Set();
 const _razorbox = class _razorbox {
   /**
    * Delegates clicks on matching links. Elements added later also work.
@@ -369,8 +417,7 @@ const _razorbox = class _razorbox {
     return this._locale;
   }
   _t(key, params = {}) {
-    const value = this.options.l10n?.[key] ?? this._strings[key] ?? LOCALES.en[key] ?? key;
-    return String(value).replace(/\{(\w+)\}/g, (full, name) => params[name] === void 0 ? full : String(params[name]));
+    return formatMessage(this.options.l10n?.[key] ?? this._strings[key] ?? LOCALES.en[key] ?? key, params);
   }
   _setLabel(element, value) {
     if (!element) return;
@@ -694,28 +741,7 @@ const _razorbox = class _razorbox {
   // player parameters. Playback is started through the player APIs, NOT via
   // autoplay=1 in the iframe URL. Separate CSS is still supplied by the app.
   _embedUrl(item) {
-    const reference = providerReference(item.src);
-    if (!reference || reference.type !== item.type) return "";
-    const privacy = this.options.videoPrivacy !== false;
-    const src = reference.type === "youtube" ? new URL(`https://www.youtube${privacy ? "-nocookie" : ""}.com/embed/${reference.id}`) : new URL(`https://player.vimeo.com/video/${reference.id}`);
-    if (reference.type === "youtube") {
-      src.searchParams.set("v", reference.id);
-      src.searchParams.set("controls", "1");
-      src.searchParams.set("enablejsapi", "1");
-      src.searchParams.set("nocookie", privacy ? "1" : "0");
-      src.searchParams.set("rel", "0");
-      src.searchParams.set("fs", "1");
-      src.searchParams.set("playsinline", "1");
-      if (this.options.videoMuted) src.searchParams.set("mute", "1");
-    } else {
-      if (reference.hash) src.searchParams.set("h", reference.hash);
-      src.searchParams.set("byline", "1");
-      src.searchParams.set("color", "00adef");
-      src.searchParams.set("controls", "1");
-      src.searchParams.set("dnt", privacy ? "1" : "0");
-      src.searchParams.set("muted", this.options.videoMuted ? "1" : "0");
-    }
-    return src.toString();
+    return providerEmbedUrl(item, { privacy: this.options.videoPrivacy !== false, muted: Boolean(this.options.videoMuted) });
   }
   // Fancybox 6.1.15 Carousel Video protocol:
   // YouTube: iframe load -> listening -> onReady -> playVideo
@@ -887,26 +913,7 @@ const _razorbox = class _razorbox {
     pollingTimer = setTimeout(poll, 250);
   }
   _mapEmbedUrl(item) {
-    const original = googleMapsUrl(item.src);
-    if (!original) return "";
-    const provided = googleMapsUrl(item.embedSrc);
-    if (provided?.pathname.startsWith("/maps/embed")) return provided.href;
-    if (original.pathname.startsWith("/maps/embed")) return original.href;
-    const query = mapQuery(original);
-    if (!query) return "";
-    if (this.options.mapApiKey) {
-      const embed2 = new URL("https://www.google.com/maps/embed/v1/place");
-      embed2.searchParams.set("key", String(this.options.mapApiKey));
-      const placeId = original.searchParams.get("query_place_id");
-      embed2.searchParams.set("q", placeId ? `place_id:${placeId}` : query);
-      embed2.searchParams.set("language", this._locale);
-      return embed2.href;
-    }
-    const embed = new URL("https://maps.google.com/maps");
-    embed.searchParams.set("q", query);
-    embed.searchParams.set("output", "embed");
-    embed.searchParams.set("hl", this._locale);
-    return embed.href;
+    return mapEmbedUrl(item, { apiKey: this.options.mapApiKey, locale: this._locale });
   }
   _externalLink(href, label) {
     const link = document.createElement("a");

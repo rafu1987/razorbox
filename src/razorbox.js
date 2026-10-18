@@ -1,299 +1,22 @@
 /* razorbox - dependency-free media lightbox. Styles are distributed separately. */
 
+import { DEFAULT_OPTIONS } from './options.js'
+import { LOCALES, detectLocale, formatMessage } from './i18n.js'
+import { icon, button } from './icons.js'
+import { numberInRange, contentDuration } from './utils.js'
+import {
+  PROVIDER_TYPES,
+  PROVIDER_ORIGINS,
+  providerReference,
+  normalizeItem,
+  providerEmbedUrl,
+  mapEmbedUrl
+} from './media.js'
+
 let instanceSequence = 0
 
-const DEFAULT_OPTIONS = Object.freeze({
-  loop: true,
-  thumbnails: true,
-  thumbsOpen: false,
-  slideshow: true,
-  autoplay: false,
-  slideshowInterval: 3500,
-  zoom: true,
-  zoomFactor: 2,
-  maxZoom: 8,
-  wheelZoom: true,
-  fullscreen: true,
-  keyboard: true,
-  closeOnBackdrop: true,
-  captionHtml: false,
-  preload: 1,
-  transition: 'fade',
-  transitionDuration: 300,
-  videoAutoplay: true,
-  videoMuted: false,
-  videoMutedFallback: true,
-  videoPrivacy: true,
-  theme: 'dark',
-  locale: 'auto',
-  l10n: null,
-  mapApiKey: '',
-  onOpen: null,
-  onChange: null,
-  onClose: null
-})
-
-// Bundled translations avoid runtime language requests. The page's <html lang>
-// takes precedence over the browser language (especially useful in TYPO3).
-const LOCALES = Object.freeze({
-  en: {
-    gallery: 'Media gallery',
-    controls: 'Gallery controls',
-    thumbnails: 'Gallery thumbnails',
-    previous: 'Previous item',
-    next: 'Next item',
-    close: 'Close gallery',
-    play: 'Play slideshow',
-    pause: 'Pause slideshow',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
-    fullscreen: 'Enter fullscreen',
-    fullscreenExit: 'Exit fullscreen',
-    thumbsShow: 'Show thumbnails',
-    thumbsHide: 'Hide thumbnails',
-    goToItem: 'Go to item {number}',
-    contentError: 'The content could not be loaded.',
-    inlineNotFound: 'This content could not be found.',
-    image: 'Image',
-    content: 'Content',
-    video: 'Video',
-    map: 'Google Map',
-    pdf: 'PDF document',
-    embeddedPage: 'Embedded page',
-    youtubeVideo: 'YouTube video',
-    vimeoVideo: 'Vimeo video',
-    status: '{type} {number} of {total}. {alt}',
-    openMap: 'Open in Google Maps',
-    openPdf: 'Open PDF in a new tab',
-    mapUnavailable: 'The map preview is unavailable. You can open it in Google Maps.',
-    unmute: 'Turn on sound'
-  },
-  de: {
-    gallery: 'Mediengalerie',
-    controls: 'Galerie-Steuerelemente',
-    thumbnails: 'Galerie-Vorschaubilder',
-    previous: 'Vorheriger Eintrag',
-    next: 'Nächster Eintrag',
-    close: 'Galerie schließen',
-    play: 'Diashow starten',
-    pause: 'Diashow pausieren',
-    zoomIn: 'Vergrößern',
-    zoomOut: 'Verkleinern',
-    fullscreen: 'Vollbild aktivieren',
-    fullscreenExit: 'Vollbild beenden',
-    thumbsShow: 'Vorschaubilder anzeigen',
-    thumbsHide: 'Vorschaubilder ausblenden',
-    goToItem: 'Zu Eintrag {number} springen',
-    contentError: 'Der Inhalt konnte nicht geladen werden.',
-    inlineNotFound: 'Dieser Inhalt wurde nicht gefunden.',
-    image: 'Bild',
-    content: 'Inhalt',
-    video: 'Video',
-    map: 'Google-Karte',
-    pdf: 'PDF-Dokument',
-    embeddedPage: 'Eingebettete Seite',
-    youtubeVideo: 'YouTube-Video',
-    vimeoVideo: 'Vimeo-Video',
-    status: '{type} {number} von {total}. {alt}',
-    openMap: 'In Google Maps öffnen',
-    openPdf: 'PDF in neuem Tab öffnen',
-    mapUnavailable: 'Kartenvorschau nicht verfügbar. Karte in Google Maps öffnen.',
-    unmute: 'Ton einschalten'
-  },
-  fr: {
-    gallery: 'Galerie multimédia',
-    controls: 'Commandes de la galerie',
-    thumbnails: 'Miniatures de la galerie',
-    previous: 'Élément précédent',
-    next: 'Élément suivant',
-    close: 'Fermer la galerie',
-    play: 'Démarrer le diaporama',
-    pause: 'Mettre le diaporama en pause',
-    zoomIn: 'Agrandir',
-    zoomOut: 'Réduire',
-    fullscreen: 'Passer en plein écran',
-    fullscreenExit: 'Quitter le plein écran',
-    thumbsShow: 'Afficher les miniatures',
-    thumbsHide: 'Masquer les miniatures',
-    goToItem: 'Aller à l’élément {number}',
-    contentError: 'Impossible de charger le contenu.',
-    inlineNotFound: 'Ce contenu est introuvable.',
-    image: 'Image',
-    content: 'Contenu',
-    video: 'Vidéo',
-    map: 'Carte Google Maps',
-    pdf: 'Document PDF',
-    embeddedPage: 'Page intégrée',
-    youtubeVideo: 'Vidéo YouTube',
-    vimeoVideo: 'Vidéo Vimeo',
-    status: '{type} {number} sur {total}. {alt}',
-    openMap: 'Ouvrir dans Google Maps',
-    openPdf: 'Ouvrir le PDF dans un nouvel onglet',
-    mapUnavailable: 'Aperçu de la carte indisponible. Vous pouvez l’ouvrir dans Google Maps.',
-    unmute: 'Activer le son'
-  }
-})
-
-function supportedLocale (value) {
-  const code = String(value ?? '').trim().split(/[-_]/)[0].toLowerCase()
-  return Object.hasOwn(LOCALES, code) ? code : ''
-}
-
-function detectLocale (preferred = 'auto') {
-  if (preferred && preferred !== 'auto') return supportedLocale(preferred) || 'en'
-  const page = supportedLocale(document.documentElement.lang)
-  if (page) return page
-  const languages = [...(navigator.languages || []), navigator.language]
-  return languages.map(supportedLocale).find(Boolean) || 'en'
-}
-
-const ICONS = {
-  close: '<path d="M6 6l12 12M18 6L6 18"/>',
-  next: '<path d="m9 5 7 7-7 7"/>',
-  prev: '<path d="m15 5-7 7 7 7"/>',
-  play: '<path d="m8 5 11 7-11 7z"/>',
-  pause: '<path d="M8 5v14M16 5v14"/>',
-  zoomIn: '<circle cx="10.7" cy="10.7" r="6.7"/><path d="m16 16 5 5M7.7 10.7h6M10.7 7.7v6"/>',
-  zoomOut: '<circle cx="10.7" cy="10.7" r="6.7"/><path d="m16 16 5 5M7.7 10.7h6"/>',
-  fullscreen: '<path d="M9 4H4v5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',
-  fullscreenExit: '<path d="M4 9h5V4M20 9h-5V4M15 20v-5h5M4 15h5v5"/>',
-  thumbs: '<rect x="2.5" y="3.5" width="19" height="14" rx="1.4"/><path d="M6 21h1M11.5 21h1M17 21h1"/>',
-  html: '<path d="m8 7-4 5 4 5M16 7l4 5-4 5M14 5l-4 14"/>',
-  unmute: '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/>',
-  iframe: '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M6 6.5h.1M9 6.5h.1"/>'
-}
-
-function icon (name) {
-  return `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICONS[name]}</svg>`
-}
-
-function button (action, label, content, extra = '') {
-  return `<button type="button" class="razorbox__button" data-rb-action="${action}" aria-label="${label}" title="${label}" ${extra}>${content}</button>`
-}
-
-function numberInRange (value, min, max) {
-  return Math.min(max, Math.max(min, value))
-}
-
-function contentDuration (value) {
-  const ms = Number(value)
-  return Number.isFinite(ms) ? numberInRange(ms, 0, 2000) : 300
-}
-
-const PROVIDER_TYPES = new Set(['youtube', 'vimeo'])
-const VIDEO_EXTENSIONS = /\.(?:mp4|webm|ogv|ogg|m4v)(?:[?#]|$)/i
-const PDF_EXTENSION = /\.pdf(?:[?#]|$)/i
-
-// Connecting to the player host as soon as the user touches or hovers a
-// trigger lets the player become ready sooner, which matters on iOS: its play
-// command must arrive while the tap still counts. Only the player document
-// request can reuse this connection; the player's own subresources live in a
-// separate network partition.
-const PROVIDER_ORIGINS = {
-  youtube: privacy => [privacy ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'],
-  vimeo: () => ['https://player.vimeo.com']
-}
+// Origins already preconnected on this page, shared by all instances.
 const preconnected = new Set()
-
-function safeFrameUrl (src) {
-  if (!src) return ''
-  try {
-    const base = typeof document !== 'undefined' ? document.baseURI : 'https://razorbox.invalid/'
-    const url = new URL(src, base)
-    return ['http:', 'https:'].includes(url.protocol) ? url.href : ''
-  } catch { return '' }
-}
-
-// Only recognized YouTube and Vimeo URLs can receive video-provider embed parameters.
-function providerReference (src) {
-  let url
-  try { url = new URL(src, 'https://razorbox.invalid/') } catch { return null }
-  if (!['http:', 'https:'].includes(url.protocol)) return null
-  const host = url.hostname.toLowerCase()
-  const segments = url.pathname.split('/').filter(Boolean)
-  let id
-  if (host === 'youtu.be') id = segments[0]
-  else if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) {
-    if (segments[0] === 'watch') id = url.searchParams.get('v')
-    else if (['embed', 'shorts', 'live', 'v'].includes(segments[0])) id = segments[1]
-  }
-  if (id && /^[a-zA-Z0-9_-]{11}$/.test(id)) return { type: 'youtube', id }
-  if (['vimeo.com', 'www.vimeo.com', 'player.vimeo.com'].includes(host)) {
-    const videoPosition = segments[0] === 'video' ? 1 : 0
-    id = segments[videoPosition]
-    if (id && /^\d+$/.test(id)) {
-      const hash = url.searchParams.get('h') || segments[videoPosition + 1] || ''
-      return { type: 'vimeo', id, hash: /^[a-zA-Z0-9]+$/.test(hash) ? hash : '' }
-    }
-  }
-  return null
-}
-
-const MAP_HOSTS = new Set(['www.google.com', 'google.com', 'maps.google.com', 'www.google.de', 'google.de', 'maps.google.de', 'www.google.fr', 'google.fr', 'maps.google.fr'])
-
-function googleMapsUrl (src) {
-  let url
-  try { url = new URL(src, typeof document !== 'undefined' ? document.baseURI : 'https://razorbox.invalid/') } catch { return null }
-  if (!['http:', 'https:'].includes(url.protocol)) return null
-  const host = url.hostname.toLowerCase()
-  if (!MAP_HOSTS.has(host)) return null
-  return url.pathname.startsWith('/maps') || (host.startsWith('maps.google.') && url.searchParams.has('q')) ? url : null
-}
-
-function mapQuery (url) {
-  const params = url.searchParams
-  const candidate = params.get('query') || params.get('q') || params.get('ll') || params.get('center')
-  if (candidate) return candidate
-  const path = url.pathname.match(/^\/maps\/(?:search|place)\/([^/]+)/)
-  if (path) {
-    try { return decodeURIComponent(path[1].replace(/\+/g, ' ')) } catch { return path[1] }
-  }
-  const coords = url.pathname.match(/^\/maps\/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/)
-  return coords ? `${coords[1]},${coords[2]}` : ''
-}
-
-function normalizeItem (item) {
-  if (typeof item === 'string') item = { src: item }
-  if (!item || typeof item !== 'object') return null
-  let src = typeof item.src === 'string' ? item.src.trim() : ''
-  const html = typeof item.html === 'string' ? item.html : ''
-  const declared = String(item.type ?? 'auto').toLowerCase()
-  const provider = src ? providerReference(src) : null
-  const isMap = Boolean(src && googleMapsUrl(src))
-  if (PROVIDER_TYPES.has(declared) && provider?.type !== declared) return null
-  let type = declared === 'auto'
-    ? (provider?.type || (isMap ? 'map' : PDF_EXTENSION.test(src) ? 'pdf' : VIDEO_EXTENSIONS.test(src) ? 'video' : 'image'))
-    : declared
-  if (type === 'html5') type = 'video'
-  // Do not let explicitly declared generic iframes bypass privacy mode for
-  // recognized provider video URLs. They still use the provider player.
-  if (type === 'iframe' && provider) type = provider.type
-  if (type === 'iframe' && isMap) type = 'map'
-  if (type === 'iframe' && PDF_EXTENSION.test(src)) type = 'pdf'
-  if (!['image', 'video', 'youtube', 'vimeo', 'html', 'iframe', 'map', 'pdf'].includes(type)) return null
-  if (type === 'html') {
-    // Inline nodes are specified with #id; literal HTML requires an explicit type.
-    if (!html && !(src.startsWith('#') && src.length > 1)) return null
-  } else if (type === 'iframe' || type === 'pdf' || type === 'map') {
-    src = safeFrameUrl(src)
-    if (!src || (type === 'map' && !googleMapsUrl(src))) return null
-  } else if (!src) return null
-  const fallbackThumb = type === 'image'
-    ? src
-    : typeof item.poster === 'string' && item.poster
-      ? item.poster
-      : ''
-  return {
-    src,
-    type,
-    html,
-    thumb: typeof item.thumb === 'string' && item.thumb ? item.thumb : fallbackThumb,
-    poster: typeof item.poster === 'string' ? item.poster : '',
-    embedSrc: typeof item.embedSrc === 'string' ? item.embedSrc : '',
-    caption: String(item.caption ?? ''),
-    alt: String(item.alt ?? '')
-  }
-}
 
 export class razorbox {
   static activeInstance = null
@@ -387,8 +110,7 @@ export class razorbox {
   get locale () { return this._locale }
 
   _t (key, params = {}) {
-    const value = this.options.l10n?.[key] ?? this._strings[key] ?? LOCALES.en[key] ?? key
-    return String(value).replace(/\{(\w+)\}/g, (full, name) => params[name] === undefined ? full : String(params[name]))
+    return formatMessage(this.options.l10n?.[key] ?? this._strings[key] ?? LOCALES.en[key] ?? key, params)
   }
 
   _setLabel (element, value) {
@@ -738,38 +460,7 @@ export class razorbox {
   // player parameters. Playback is started through the player APIs, NOT via
   // autoplay=1 in the iframe URL. Separate CSS is still supplied by the app.
   _embedUrl (item) {
-    const reference = providerReference(item.src)
-    if (!reference || reference.type !== item.type) return ''
-
-    const privacy = this.options.videoPrivacy !== false
-    const src = reference.type === 'youtube'
-      ? new URL(`https://www.youtube${privacy ? '-nocookie' : ''}.com/embed/${reference.id}`)
-      : new URL(`https://player.vimeo.com/video/${reference.id}`)
-
-    if (reference.type === 'youtube') {
-      // Fancybox preserves the original watch URL's v parameter. It is safe to
-      // keep and matches its generated embed URLs for YouTube watch links.
-      src.searchParams.set('v', reference.id)
-      src.searchParams.set('controls', '1')
-      src.searchParams.set('enablejsapi', '1')
-      src.searchParams.set('nocookie', privacy ? '1' : '0')
-      src.searchParams.set('rel', '0')
-      src.searchParams.set('fs', '1')
-      // Required on iOS for inline (and therefore muted) playback.
-      src.searchParams.set('playsinline', '1')
-      if (this.options.videoMuted) src.searchParams.set('mute', '1')
-      // Deliberately no origin= parameter. Fancybox 6 does not add one, and
-      // it can cause the YouTube IFrame API to reject non-standard dev hosts.
-    } else {
-      if (reference.hash) src.searchParams.set('h', reference.hash)
-      src.searchParams.set('byline', '1')
-      src.searchParams.set('color', '00adef')
-      src.searchParams.set('controls', '1')
-      src.searchParams.set('dnt', privacy ? '1' : '0')
-      src.searchParams.set('muted', this.options.videoMuted ? '1' : '0')
-    }
-
-    return src.toString()
+    return providerEmbedUrl(item, { privacy: this.options.videoPrivacy !== false, muted: Boolean(this.options.videoMuted) })
   }
 
   // Fancybox 6.1.15 Carousel Video protocol:
@@ -980,29 +671,7 @@ export class razorbox {
   }
 
   _mapEmbedUrl (item) {
-    const original = googleMapsUrl(item.src)
-    if (!original) return ''
-    const provided = googleMapsUrl(item.embedSrc)
-    if (provided?.pathname.startsWith('/maps/embed')) return provided.href
-    if (original.pathname.startsWith('/maps/embed')) return original.href
-    const query = mapQuery(original)
-    if (!query) return ''
-    if (this.options.mapApiKey) {
-      // Official Google Maps Embed API; a referrer-restricted API key is required.
-      const embed = new URL('https://www.google.com/maps/embed/v1/place')
-      embed.searchParams.set('key', String(this.options.mapApiKey))
-      const placeId = original.searchParams.get('query_place_id')
-      embed.searchParams.set('q', placeId ? `place_id:${placeId}` : query)
-      embed.searchParams.set('language', this._locale)
-      return embed.href
-    }
-    // Compatibility embed (no key). Not an official supported Maps Embed API;
-    // the permanent, accessible 'Open in Google Maps' link is the fallback.
-    const embed = new URL('https://maps.google.com/maps')
-    embed.searchParams.set('q', query)
-    embed.searchParams.set('output', 'embed')
-    embed.searchParams.set('hl', this._locale)
-    return embed.href
+    return mapEmbedUrl(item, { apiKey: this.options.mapApiKey, locale: this._locale })
   }
 
   _externalLink (href, label) {

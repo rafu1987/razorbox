@@ -11,7 +11,14 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const candidates = [process.env.CHROMIUM_PATH, '/usr/bin/chromium', '/usr/bin/google-chrome', '/usr/bin/chromium-browser']
+const candidates = [
+  process.env.CHROMIUM_PATH,
+  '/usr/bin/chromium',
+  '/usr/bin/google-chrome',
+  '/usr/bin/chromium-browser',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Chromium.app/Contents/MacOS/Chromium'
+]
 const chromium = candidates.find(file => file && existsSync(file))
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -61,11 +68,11 @@ async function loadInlineFixture (browser) {
   const body = html.split('<body>')[1].split('</body>')[0]
   const demoCss = await readFile(path.join(projectRoot, 'demo/demo.css'), 'utf8')
   const libraryCss = await readFile(path.join(projectRoot, 'dist/razorbox.css'), 'utf8')
-  const source = (await readFile(path.join(projectRoot, 'src/razorbox.js'), 'utf8'))
-    .replace('export class razorbox', 'class razorbox')
-    .replace('export default razorbox;', '')
+  // The source is split into ES modules, so inline the self-contained bundle.
+  const source = (await readFile(path.join(projectRoot, 'dist/razorbox.js'), 'utf8'))
+    .replace(/^export \{[\s\S]*?\};?$/m, '')
   const demoScript = (await readFile(path.join(projectRoot, 'demo/main.js'), 'utf8'))
-    .replace("import razorbox from '../src/razorbox.js';", '')
+    .replace(/^import razorbox from '\.\.\/src\/razorbox\.js'\n/m, '')
   await browser.eval(`(function () { document.head.innerHTML = ${JSON.stringify(`<meta name="viewport" content="width=device-width,initial-scale=1"><base href="https://razorbox.invalid/"><style>${demoCss}</style><style>${libraryCss}</style>`)}; document.body.innerHTML = ${JSON.stringify(body)}; return true; })()`)
   await browser.eval(`(function () { ${source}\n${demoScript}\nreturn true; })()`)
 }
