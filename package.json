@@ -1,6 +1,6 @@
 {
   "name": "@rafu1987/razorbox",
-  "version": "0.7.0-alpha.4",
+  "version": "0.7.0-alpha.5",
   "description": "Lightweight, dependency-free, Fancybox-inspired image, video, HTML, iframe, maps and PDF lightbox with separate CSS.",
   "type": "module",
   "repository": {
@@ -52,12 +52,17 @@
     "dev": "vite --open /demo.html",
     "build": "vite build --mode readable && vite build --mode minified && node scripts/copy-types.mjs",
     "test": "node --test tests/package.test.mjs",
-    "test:browser": "node --test tests/browser.test.mjs"
+    "test:browser": "node --test tests/browser.test.mjs",
+    "lint:css": "stylelint \"src/scss/**/*.scss\"",
+    "lint:css:fix": "stylelint \"src/scss/**/*.scss\" --fix"
   },
   "devDependencies": {
     "sass": "^1.90.0",
-    "vite": "^7.1.0",
-    "terser": "^5.39.2"
+    "stylelint": "^17.16.0",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-order": "^8.1.2",
+    "terser": "^5.39.2",
+    "vite": "^7.1.0"
   },
   "engines": {
     "node": ">=20.19.0"
