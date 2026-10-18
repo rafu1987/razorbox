@@ -1,3 +1,13 @@
+## 0.7.0-alpha.7
+
+- Fix missing TypeScript types for the `@rafu1987/razorbox/razorbox.min.js` export.
+- Split the source into ES modules (`options`, `i18n`, `icons`, `utils`, `media`). The published bundles and their behavior are unchanged.
+- Add unit tests, axe-core accessibility tests and keyboard/focus tests in a real browser.
+- Add CI, package linting (publint, Are the Types Wrong) and npm publishing with provenance from GitHub Actions.
+- Publish the demo on GitHub Pages.
+- Document the full API in the README, and add SECURITY.md and CONTRIBUTING.md.
+- Until 1.0, every release is published under the npm `latest` tag.
+
 ## 0.7.0-alpha.2
 
 - Vite generates both readable and minified JS/CSS assets in a two-pass library build.
