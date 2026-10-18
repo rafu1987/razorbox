@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { cp, rename } from 'node:fs/promises'
 import { fileURLToPath, URL } from 'node:url'
+import { demoVersion } from './demo/version-plugin.js'
 
 // Static build of demo.html for GitHub Pages. The demo links to its media via
 // href/data-* attributes, which Vite does not rewrite, so demo/assets is copied
@@ -21,7 +22,7 @@ export default defineConfig({
       }
     }
   },
-  plugins: [{
+  plugins: [demoVersion(), {
     name: 'razorbox-demo-pages',
     apply: 'build',
     async closeBundle () {

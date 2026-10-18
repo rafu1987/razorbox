@@ -497,6 +497,11 @@ export default {
     'declaration-no-important': true,
     'value-no-vendor-prefix': true,
     'color-no-hex': true,
+    // BEM: block, block__element, block--modifier (as in razorbox__toolbar).
+    'selector-class-pattern': [
+      '^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
+      { message: 'Expected class selector to be BEM (block__element--modifier)' }
+    ],
     'color-named': 'never',
 
     'order/properties-order': [

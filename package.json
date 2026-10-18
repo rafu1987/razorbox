@@ -62,8 +62,8 @@
     "test:browser": "node --test --test-concurrency=1 tests/browser.test.mjs tests/a11y.test.mjs",
     "lint:js": "standard",
     "lint:js:fix": "standard --fix",
-    "lint:css": "stylelint \"src/scss/**/*.scss\"",
-    "lint:css:fix": "stylelint \"src/scss/**/*.scss\" --fix",
+    "lint:css": "stylelint \"src/scss/**/*.scss\" \"demo/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/scss/**/*.scss\" \"demo/**/*.css\" --fix",
     "lint:package": "publint --pack npm && attw --pack . --profile esm-only --exclude-entrypoints ./css ./razorbox.css ./scss ./css/min ./razorbox.min.css",
     "release:check": "yarn lint:js && yarn lint:css && yarn test && yarn test:browser && yarn lint:package",
     "release": "np",
@@ -119,6 +119,6 @@
   "lint-staged": {
     "{src,tests,scripts,demo}/**/*.{js,mjs}": "standard --fix",
     "vite*.config.js": "standard --fix",
-    "src/scss/**/*.scss": "stylelint --fix"
+    "{src/scss/**/*.scss,demo/**/*.css}": "stylelint --fix"
   }
 }

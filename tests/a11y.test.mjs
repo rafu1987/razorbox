@@ -59,6 +59,13 @@ test('lightbox accessibility: dialog semantics, axe rules, focus management and 
   await browser.call('Emulation.setFocusEmulationEnabled', { enabled: true })
   await browser.eval(`${axeSource}; true`)
 
+  await t.test('demo page has no axe violations', async () => {
+    const violations = await browser.eval(`axe.run({ exclude: [['.razorbox']] }, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] }
+    }).then(result => result.violations.map(v => v.id + ': ' + v.help + ' (' + v.nodes.slice(0, 5).map(n => n.target.join(' ')).join(', ') + ')'))`)
+    assert.deepEqual(violations, [])
+  })
+
   await t.test('opening moves focus into a labelled modal dialog', async () => {
     await openFirstGallery(browser)
     const dialog = await browser.eval(`(() => {

@@ -10,6 +10,7 @@ on:
       - 'src/**'
       - 'demo/**'
       - 'demo.html'
+      - 'package.json' # version shown in the demo
       - 'vite.demo.config.js'
       - '.github/workflows/demo.yml'
   workflow_dispatch:
