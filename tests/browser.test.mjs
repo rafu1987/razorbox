@@ -319,7 +319,9 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   }
   for (const width of [390, 320]) {
     await browser.call('Emulation.setDeviceMetricsOverride', { width, height: 844, deviceScaleFactor: 1, mobile: true })
-    const geometry = await browser.eval(`(() => {
+    // Resizing refits the image; measure only once the layout has settled
+    // (two identical readings), or slower CI runners read mid-resize.
+    const measure = () => browser.eval(`(() => {
       const count = document.querySelector('.razorbox__counter').getBoundingClientRect();
       const toolbar = document.querySelector('.razorbox__toolbar').getBoundingClientRect();
       const slide = document.querySelector('.razorbox__slide.is-active');
@@ -330,6 +332,14 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
         captionTop: caption.top, captionBottom: caption.bottom, slideBottom: slide.getBoundingClientRect().bottom,
         arrowCenterY: arrow.top + arrow.height / 2, arrowLeft: arrow.left };
     })()`)
+    let previous = null
+    const geometry = await waitUntil(async () => {
+      const current = await measure()
+      const settled = previous && JSON.stringify(previous) === JSON.stringify(current)
+      previous = current
+      if (!settled) await sleep(100)
+      return settled ? current : null
+    })
     assert.ok(geometry.countRight <= geometry.toolbarLeft, `Mobile toolbar overlaps counter at ${width}px`)
     assert.ok(geometry.arrowCenterY >= geometry.imageTop && geometry.arrowCenterY <= geometry.imageBottom, `Mobile navigation arrow is not over image at ${width}px`)
     assert.ok(geometry.arrowLeft >= 0)
