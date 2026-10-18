@@ -7,6 +7,9 @@
   <meta name="color-scheme" content="dark">
   <meta name="description" content="razorbox is a dependency-free JavaScript lightbox for images, video, maps, PDFs and HTML, with separate CSS and accessible controls.">
   <title>razorbox · a lightbox with a razor’s edge</title>
+  <link rel="icon" href="./demo/favicon.ico" sizes="32x32">
+  <link rel="icon" href="./demo/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./demo/apple-touch-icon.png">
   <link rel="preload" href="./demo/fonts/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="./demo/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./demo/demo.css">
@@ -130,17 +133,17 @@
         <p class="section__intro">HTML5, YouTube and Vimeo play inline next to your photos. Autoplay starts with the user's tap, embeds are privacy-enhanced, and playback stops when you leave the slide.</p>
       </header>
       <div class="media-grid media-grid--screens">
-        <a class="media-card" href="./demo/assets/coast-waves.mp4" data-razorbox="motion" data-type="video" data-poster="./demo/assets/photos/poster-html5.jpg" data-caption="HTML5 video: waves on a rocky shore, seen from above · Video: Tom Fisk / Pexels" data-alt="Aerial view of waves breaking on a rocky shore">
-          <span class="media-card__screen"><img src="./demo/assets/photos/poster-html5.jpg" alt="Waves on a rocky shore, video poster" loading="lazy"><span class="media-card__play" aria-hidden="true"></span></span>
-          <span class="media-card__info"><strong>Native HTML5 video</strong><span class="media-card__tag">MP4 · 1.7 MB · plays offline</span></span>
+        <a class="media-card" href="./demo/assets/kalaloch-waves.mp4" data-razorbox="motion" data-type="video" data-poster="./demo/assets/photos/poster-html5.jpg" data-caption="HTML5 video with sound: surf at Kalaloch Beach, Washington · Video: Joe Mabel / Wikimedia Commons, CC BY-SA 4.0" data-alt="Waves breaking over a rock at dusk">
+          <span class="media-card__screen"><img src="./demo/assets/photos/poster-html5.jpg" alt="A wave breaking over a rock at dusk, video poster" loading="lazy"><span class="media-card__play" aria-hidden="true"></span></span>
+          <span class="media-card__info"><strong><svg class="platform-icon platform-icon--html5" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg>Native HTML5 video</strong><span class="media-card__tag">MP4 with sound · 2.5 MB · offline</span></span>
         </a>
         <a class="media-card" href="https://www.youtube.com/watch?v=C9f88SVNHxA" data-razorbox="motion" data-thumb="./demo/assets/photos/poster-youtube.jpg" data-caption="YouTube: Norway From Above, fjords and landscapes in 4K, by CarlFurset" data-alt="Norway From Above, a 4K landscape film">
           <span class="media-card__screen"><img src="./demo/assets/photos/poster-youtube.jpg" alt="A Norwegian fjord between steep mountains" loading="lazy"><span class="media-card__play" aria-hidden="true"></span></span>
-          <span class="media-card__info"><strong>YouTube</strong><span class="media-card__tag">Norway From Above · youtube-nocookie.com</span></span>
+          <span class="media-card__info"><strong><svg class="platform-icon platform-icon--youtube" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>YouTube</strong><span class="media-card__tag">Norway From Above · youtube-nocookie.com</span></span>
         </a>
         <a class="media-card" href="https://vimeo.com/155404383" data-razorbox="motion" data-thumb="./demo/assets/photos/poster-vimeo.jpg" data-caption="Vimeo: Skylight, a 4K timelapse film by Chris Pritchard" data-alt="Skylight, a 4K timelapse film">
           <span class="media-card__screen"><img src="./demo/assets/photos/poster-vimeo.jpg" alt="Storm clouds lit by sunset over a mountain range" loading="lazy"><span class="media-card__play" aria-hidden="true"></span></span>
-          <span class="media-card__info"><strong>Vimeo</strong><span class="media-card__tag">Skylight · dnt=1</span></span>
+          <span class="media-card__info"><strong><svg class="platform-icon platform-icon--vimeo" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M23.977 6.417c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197a315.065 315.065 0 0 0 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/></svg>Vimeo</strong><span class="media-card__tag">Skylight · dnt=1</span></span>
         </a>
       </div>
       <p class="fine-print">The HTML5 sample is bundled and works offline. YouTube and Vimeo still connect to external services and may need consent on your site.</p>
@@ -407,7 +410,7 @@ razorbox.bind(&#x27;[data-razorbox]&#x27;, {
       <p class="footer__mark" aria-hidden="true">razor<em>box</em></p>
       <div class="footer__meta">
         <p>Made for images that deserve the spotlight.</p>
-        <p class="footer__credits">Photos from <a href="https://unsplash.com">Unsplash</a>, video from <a href="https://www.pexels.com">Pexels</a> · <a href="https://github.com/rafu1987/razorbox/blob/main/demo/assets/photos/CREDITS.md">Credits</a></p>
+        <p class="footer__credits">Photos from <a href="https://unsplash.com">Unsplash</a>, video from <a href="https://commons.wikimedia.org">Wikimedia Commons</a> · <a href="https://github.com/rafu1987/razorbox/blob/main/demo/assets/photos/CREDITS.md">Credits</a></p>
         <p class="footer__links"><a class="footer__logo-link" href="https://github.com/rafu1987/razorbox"><svg class="logo" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub</a><a class="footer__logo-link" href="https://www.npmjs.com/package/@rafu1987/razorbox"><svg class="logo" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456L12.04 19.17H5.113z"/></svg>npm</a><a href="https://github.com/rafu1987/razorbox/blob/main/CHANGELOG.md">Changelog</a><span>MIT · v__RAZORBOX_VERSION__</span></p>
         <a class="footer__top" href="#top">Back to top ↑</a>
       </div>

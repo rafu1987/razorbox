@@ -3,8 +3,10 @@
 Media used by the demo page only; none of it is part of the npm package.
 
 Photos are from [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license).
-The video is from [Pexels](https://www.pexels.com) under the [Pexels License](https://www.pexels.com/license/).
-Both allow free use without attribution; we credit the photographers anyway.
+The Unsplash License allows free use without attribution; we credit the photographers anyway.
+The HTML5 video is from [Wikimedia Commons](https://commons.wikimedia.org) under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), which requires attribution and
+that our excerpt is shared under the same license (it is, see below).
 
 | File | Photographer | Source |
 | ---- | ------------ | ------ |
@@ -23,10 +25,14 @@ Both allow free use without attribution; we credit the photographers anyway.
 | `content-pdf.jpg`, `content-pdf-thumb.jpg` | [2H Media](https://unsplash.com/@2hmedia) | [Unsplash](https://unsplash.com/photos/a-wooden-table-topped-with-papers-and-a-pen-VnK5iT01HYQ) |
 | `poster-youtube.jpg` | [Krisjanis Mezulis](https://unsplash.com/@krisijanis) | [Unsplash](https://unsplash.com/photos/body-of-water-between-mountains-zSRqJsMcrAc) |
 | `poster-vimeo.jpg` | [Kevin Noble](https://unsplash.com/@nobleshots) | [Unsplash](https://unsplash.com/photos/snowcap-kLwR2_BmMZI) |
-| `poster-html5.jpg` (frame of the video) | [Tom Fisk](https://www.pexels.com/@tomfisk/) | [Pexels](https://www.pexels.com/video/aerial-view-of-rocky-shoreline-and-ocean-waves-35008815/) |
-| `../coast-waves.mp4` (8 s excerpt, color graded, 960×540) | [Tom Fisk](https://www.pexels.com/@tomfisk/) | [Pexels](https://www.pexels.com/video/aerial-view-of-rocky-shoreline-and-ocean-waves-35008815/) |
+| `poster-html5.jpg` (frame of the video) | [Joe Mabel](https://commons.wikimedia.org/wiki/User:Jmabel) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Waves_crashing_on_rocks_off_Beach_4,_Kalaloch_Beach,_Washington_02.webm), CC BY-SA 4.0 |
+| `../kalaloch-waves.mp4` | [Joe Mabel](https://commons.wikimedia.org/wiki/User:Jmabel) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Waves_crashing_on_rocks_off_Beach_4,_Kalaloch_Beach,_Washington_02.webm), CC BY-SA 4.0 |
 
 Embedded videos (not stored here, played from the providers):
 
 - YouTube: [Norway From Above: Breathtaking Fjords & Landscapes in 4K](https://www.youtube.com/watch?v=C9f88SVNHxA) by CarlFurset
 - Vimeo: [Skylight: A 4K Timelapse Film](https://vimeo.com/155404383) by Chris Pritchard
+
+`kalaloch-waves.mp4` and `poster-html5.jpg` are adaptations of the original: a 12 s excerpt
+(5 s to 17 s), scaled to 960×540, re-encoded to H.264/AAC with loudness normalization and short
+audio fades. They are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).

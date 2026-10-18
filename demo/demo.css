@@ -839,8 +839,27 @@ h2 em,
 }
 
 .media-card__info strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 17px;
   font-weight: 600;
+}
+
+.platform-icon {
+  flex: none;
+}
+
+.platform-icon--html5 {
+  color: rgb(228 77 38);
+}
+
+.platform-icon--youtube {
+  color: rgb(255 0 51);
+}
+
+.platform-icon--vimeo {
+  color: rgb(26 183 234);
 }
 
 .media-card__tag,
