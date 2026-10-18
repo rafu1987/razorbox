@@ -1,3 +1,14 @@
+## 0.7.0-alpha.9 - 2026-10-18
+
+### Bug fixes
+
+- Crossfade without the backdrop showing through the images
+
+### Tasks
+
+- Mark alpha releases as Latest on GitHub
+- Add Autoprefixer to the CSS build
+
 ## 0.7.0-alpha.8 - 2026-10-18
 
 ### Bug fixes
