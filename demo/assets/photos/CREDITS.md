@@ -4,6 +4,8 @@ Media used by the demo page only; none of it is part of the npm package.
 
 Photos are from [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license).
 The Unsplash License allows free use without attribution; we credit the photographers anyway.
+The HTML5 video is from [Pexels](https://www.pexels.com) under the [Pexels License](https://www.pexels.com/license/).
+Its music is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), which requires the credit below.
 
 | File | Photographer | Source |
 | ---- | ------------ | ------ |
@@ -22,17 +24,11 @@ The Unsplash License allows free use without attribution; we credit the photogra
 | `content-pdf.jpg`, `content-pdf-thumb.jpg` | [2H Media](https://unsplash.com/@2hmedia) | [Unsplash](https://unsplash.com/photos/a-wooden-table-topped-with-papers-and-a-pen-VnK5iT01HYQ) |
 | `poster-youtube.jpg` | [Krisjanis Mezulis](https://unsplash.com/@krisijanis) | [Unsplash](https://unsplash.com/photos/body-of-water-between-mountains-zSRqJsMcrAc) |
 | `poster-vimeo.jpg` | [Kevin Noble](https://unsplash.com/@nobleshots) | [Unsplash](https://unsplash.com/photos/snowcap-kLwR2_BmMZI) |
-| `poster-html5.jpg` (frame of the video) | rafu1987 | own footage, see below |
-| `../coast-rafu1987.mp4` | rafu1987 | own footage, see below |
+| `poster-html5.jpg` (frame of the video) | [Tom Fisk](https://www.pexels.com/@tomfisk/) | [Pexels](https://www.pexels.com/video/aerial-view-of-rocky-shoreline-and-ocean-waves-35008815/) |
+| `../coast-waves.mp4` (video: 10 s excerpt, color graded, 1280×720) | [Tom Fisk](https://www.pexels.com/@tomfisk/) | [Pexels](https://www.pexels.com/video/aerial-view-of-rocky-shoreline-and-ocean-waves-35008815/) |
+| `../coast-waves.mp4` (music: first 10 s, loudness normalized, fades) | [MusicLFiles](https://commons.wikimedia.org/wiki/File:Placid_Ambient_by_MusicLFiles.ogg): *Placid Ambient* | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Placid_Ambient_by_MusicLFiles.ogg), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 
 Embedded videos (not stored here, played from the providers):
 
 - YouTube: [Norway From Above: Breathtaking Fjords & Landscapes in 4K](https://www.youtube.com/watch?v=C9f88SVNHxA) by CarlFurset
 - Vimeo: [Skylight: A 4K Timelapse Film](https://vimeo.com/155404383) by Chris Pritchard
-
-## HTML5 video
-
-`coast-rafu1987.mp4` and `poster-html5.jpg` are © rafu1987, all rights reserved. They may only be
-used as part of the razorbox demo; they are not covered by the project's MIT license. The clip is a
-12 s landscape crop of a phone recording with its original sound; location and device metadata
-were removed.
