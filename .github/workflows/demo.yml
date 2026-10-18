@@ -11,6 +11,8 @@ on:
       - 'demo/**'
       - 'demo.html'
       - 'package.json' # version shown in the demo
+      - 'README.md' # rendered as the demo PDF
+      - 'scripts/demo-pdf.mjs'
       - 'vite.demo.config.js'
       - '.github/workflows/demo.yml'
   workflow_dispatch:

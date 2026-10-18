@@ -42,7 +42,7 @@ tested.
 | `yarn lint:package` | publint and Are the Types Wrong on the packed package |
 | `yarn release:check` | Everything above, as run before a release |
 | `yarn build:demo` | Static build of the demo page for GitHub Pages |
-| `yarn build:demo-pdf` | Re-renders the demo's README PDF; run it after README changes |
+| `yarn build:demo-pdf` | Renders README.md as the demo's PDF (generated, not committed; `yarn dev` and `yarn build:demo` run it) |
 
 The browser tests look for Chrome in the usual Linux and macOS locations. Set
 `CHROMIUM_PATH` to use another binary.

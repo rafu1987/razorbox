@@ -1,6 +1,8 @@
 // Renders README.md as a printable page in the demo's style and prints it to
-// demo/assets/razorbox-readme.pdf with headless Chrome or Chromium.
-// Run `yarn build:demo-pdf` after README changes. CHROMIUM_PATH overrides the browser.
+// demo/assets/razorbox-readme.pdf with headless Chrome or Chromium. The PDF is
+// generated, not committed: `yarn dev` and `yarn build:demo` run this script.
+// CHROMIUM_PATH overrides the browser. With --optional, a missing browser only
+// warns, so `yarn dev` still starts.
 import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -21,7 +23,12 @@ const browser = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   '/Applications/Chromium.app/Contents/MacOS/Chromium'
 ].find(file => file && existsSync(file))
-if (!browser) throw new Error('No Chrome or Chromium found. Set CHROMIUM_PATH.')
+if (!browser) {
+  const message = 'No Chrome or Chromium found for the demo PDF. Set CHROMIUM_PATH.'
+  if (!process.argv.includes('--optional')) throw new Error(message)
+  console.warn(`${message} Skipping it.`)
+  process.exit(0)
+}
 
 const { version } = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'))
 const markdown = (await readFile(path.join(root, 'README.md'), 'utf8'))

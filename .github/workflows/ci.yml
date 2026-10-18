@@ -55,6 +55,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn build
+      - run: yarn build:demo-pdf
       - run: yarn test:browser
         env:
           # Fail instead of skipping when Chrome is missing or cannot start.
