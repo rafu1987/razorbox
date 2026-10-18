@@ -1,3 +1,22 @@
+## 0.7.0-alpha.8 - 2026-10-18
+
+### Bug fixes
+
+- Wait for settled layout in mobile geometry test
+- Use the published package name in the demo's import snippet
+
+### Tasks
+
+- Generate CHANGELOG.md from commit subjects on release
+- Redesign the demo page and show the current version
+- Add GitHub and npm logos to the demo header and footer
+- Use real photos, videos and a README PDF in the demo
+- Generate the demo PDF automatically
+- Add platform icons to the demo's video cards and a favicon
+- Highlight the demo's code examples and use single-color video icons
+- Add a Claude Code release skill
+- Use the Pexels waves clip in HD with calm music for the HTML5 demo
+
 ## 0.7.0-alpha.7
 
 - Fix missing TypeScript types for the `@rafu1987/razorbox/razorbox.min.js` export.
