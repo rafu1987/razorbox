@@ -268,7 +268,7 @@ export class razorbox {
     if (this._scrollLocked) return
     const html = document.documentElement
     const body = document.body
-    // Match Fancybox 3: apply overflow lock to BODY, not the HTML root.
+    // Apply the overflow lock to BODY, not the HTML root.
     // The measured body margin preserves the document width when the
     // browser removes its scrollbar. No artificial scrollbar is painted.
     const width = Math.max(0, window.innerWidth - html.clientWidth)
@@ -456,14 +456,13 @@ export class razorbox {
     scroller.scrollLeft += event.deltaY
   }
 
-  // Build embed URLs using the Fancybox 6.1.15 Carousel Video plugin's
-  // player parameters. Playback is started through the player APIs, NOT via
+  // Build provider embed URLs. Playback is started through the player APIs, NOT via
   // autoplay=1 in the iframe URL. Separate CSS is still supplied by the app.
   _embedUrl (item) {
     return providerEmbedUrl(item, { privacy: this.options.videoPrivacy !== false, muted: Boolean(this.options.videoMuted) })
   }
 
-  // Fancybox 6.1.15 Carousel Video protocol:
+  // Provider player protocol:
   // YouTube: iframe load -> listening -> onReady -> playVideo
   // Vimeo:   ready -> play
   //
@@ -487,7 +486,7 @@ export class razorbox {
     const active = () => !disposed && this._isOpen && this._slide === slide && frame.isConnected
     const send = message => {
       if (!active()) return
-      // Fancybox posts to '*' because YouTube's API can respond from
+      // Post to '*' because YouTube's API can respond from
       // youtube.com even if the iframe originated at youtube-nocookie.com.
       frame.contentWindow?.postMessage(JSON.stringify(message), '*')
     }
@@ -637,7 +636,7 @@ export class razorbox {
       } catch { return }
       if (!data || typeof data !== 'object') return
 
-      // Match the active iframe by its window, or (like Fancybox) by the id
+      // Match the active iframe by its window, or by the id
       // YouTube echoes back from the listening message.
       const fromFrame = event.source === frame.contentWindow || (provider === 'youtube' && data.id === frame.id)
       if (!fromFrame) return

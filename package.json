@@ -1,7 +1,7 @@
 {
   "name": "@rafu1987/razorbox",
   "version": "0.7.0-alpha.6",
-  "description": "Lightweight, dependency-free, Fancybox-inspired image, video, HTML, iframe, maps and PDF lightbox with separate CSS.",
+  "description": "Lightweight, dependency-free image, video, HTML, iframe, maps and PDF lightbox with separate CSS.",
   "type": "module",
   "repository": {
     "type": "git",
@@ -95,7 +95,6 @@
     "vanilla-js",
     "scss",
     "vite",
-    "fancybox-alternative",
     "video-lightbox",
     "youtube",
     "vimeo"

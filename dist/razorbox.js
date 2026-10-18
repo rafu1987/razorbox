@@ -737,13 +737,12 @@ const _razorbox = class _razorbox {
     event.preventDefault();
     scroller.scrollLeft += event.deltaY;
   }
-  // Build embed URLs using the Fancybox 6.1.15 Carousel Video plugin's
-  // player parameters. Playback is started through the player APIs, NOT via
+  // Build provider embed URLs. Playback is started through the player APIs, NOT via
   // autoplay=1 in the iframe URL. Separate CSS is still supplied by the app.
   _embedUrl(item) {
     return providerEmbedUrl(item, { privacy: this.options.videoPrivacy !== false, muted: Boolean(this.options.videoMuted) });
   }
-  // Fancybox 6.1.15 Carousel Video protocol:
+  // Provider player protocol:
   // YouTube: iframe load -> listening -> onReady -> playVideo
   // Vimeo:   ready -> play
   //

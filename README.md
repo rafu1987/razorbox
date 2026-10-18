@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/@rafu1987/razorbox)](https://www.npmjs.com/package/@rafu1987/razorbox)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-Lightweight, dependency-free Vanilla JS lightbox with Fancybox-inspired controls. Supports images, galleries, videos (HTML5, YouTube, Vimeo), inline HTML, iframes, Google Maps, and PDFs. Includes smooth crossfade/slide transitions, captions **below** the content, thumbnails, zoom (trackpad pinch, mouse wheel, touch), slideshow, fullscreen, keyboard and touch navigation, and dark/light themes.
+Lightweight, dependency-free Vanilla JS lightbox with classic gallery controls. Supports images, galleries, videos (HTML5, YouTube, Vimeo), inline HTML, iframes, Google Maps, and PDFs. Includes smooth crossfade/slide transitions, captions **below** the content, thumbnails, zoom (trackpad pinch, mouse wheel, touch), slideshow, fullscreen, keyboard and touch navigation, and dark/light themes.
 
 CSS is distributed separately; JavaScript never injects a stylesheet. The backdrop fades smoothly on opening; the native scrollbar is hidden without replacing it, and returns after the closing animation finishes.
 

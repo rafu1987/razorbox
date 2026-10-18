@@ -32,7 +32,7 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
     const html = document.documentElement;
     return { width: html.clientWidth, inner: innerWidth, heroX: document.querySelector('.hero').getBoundingClientRect().left };
   })()`)
-  // Fancybox 3 uses BODY overflow locking and a separate backdrop opacity
+  // The lock uses BODY overflow and a separate backdrop opacity
   // transition. Verify that the native scrollbar is NOT simulated via DOM.
   const openingInitial = await browser.eval(`(() => {
     document.querySelector('.gallery-card').click();
@@ -49,7 +49,7 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   assert.equal(openingInitial.rootBackground, 'rgba(0, 0, 0, 0)')
   assert.equal(openingInitial.backdropOpacity, 0, 'Backdrop must start transparent')
   assert.equal(openingInitial.fakeScrollbar, false, 'Never reconstruct the OS scrollbar with DOM elements')
-  assert.equal(openingInitial.bodyLocked, true, 'Fancybox-style scroll lock must be on BODY')
+  assert.equal(openingInitial.bodyLocked, true, 'Scroll lock must be on BODY')
   assert.equal(openingInitial.rootLocked, false, 'Do not toggle overflow on the HTML root')
   assert.equal(openingInitial.bodyOverflow, 'hidden', 'Body lock must hide native scrollbar')
   await waitUntil(() => browser.eval('document.querySelector(".razorbox").classList.contains("is-entered")'))

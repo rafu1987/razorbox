@@ -126,8 +126,7 @@ export function providerEmbedUrl (item, { privacy = true, muted = false } = {}) 
     : new URL(`https://player.vimeo.com/video/${reference.id}`)
 
   if (reference.type === 'youtube') {
-    // Fancybox preserves the original watch URL's v parameter. It is safe to
-    // keep and matches its generated embed URLs for YouTube watch links.
+    // Keep the original watch URL's v parameter; YouTube accepts it on embed URLs.
     src.searchParams.set('v', reference.id)
     src.searchParams.set('controls', '1')
     src.searchParams.set('enablejsapi', '1')
@@ -137,8 +136,8 @@ export function providerEmbedUrl (item, { privacy = true, muted = false } = {}) 
     // Required on iOS for inline (and therefore muted) playback.
     src.searchParams.set('playsinline', '1')
     if (muted) src.searchParams.set('mute', '1')
-    // Deliberately no origin= parameter. Fancybox 6 does not add one, and
-    // it can cause the YouTube IFrame API to reject non-standard dev hosts.
+    // Deliberately no origin= parameter: it can cause the YouTube IFrame API
+    // to reject non-standard dev hosts.
   } else {
     if (reference.hash) src.searchParams.set('h', reference.hash)
     src.searchParams.set('byline', '1')

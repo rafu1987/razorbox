@@ -11,7 +11,7 @@ $razorbox-thumbnails-height: 112px !default;
 $razorbox-transition: 250ms !default;
 $razorbox-content-duration: 300ms !default;
 
-// Fancybox 3 locks BODY scrolling and compensates the lost scrollbar width
+// Lock BODY scrolling and compensate the lost scrollbar width
 // using a body margin. Never paint a fake scrollbar: its OS appearance cannot
 // be reliably replicated and it causes flashing in dark/light system modes.
 body {
@@ -215,7 +215,7 @@ body {
     transition: opacity var(--rb-content-duration) ease, transform var(--rb-content-duration) cubic-bezier(.2, .75, .25, 1);
     will-change: opacity, transform;
 
-    // Like fancybox, photographic content may extend to the viewport edges,
+    // Photographic content may extend to the viewport edges,
     // underneath the inset translucent controls. Non-image content keeps padding.
     &[data-rb-type="image"] {
       padding: 0;
