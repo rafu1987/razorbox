@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in razorbox does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. For security problems, please use
+        [private vulnerability reporting](https://github.com/rafu1987/razorbox/security/advisories/new) instead.
+  - type: input
+    id: version
+    attributes:
+      label: razorbox version
+      placeholder: 0.7.0-alpha.6
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Safari 18 on iOS 18.2
+    validations:
+      required: true
+  - type: dropdown
+    id: content
+    attributes:
+      label: Content type
+      multiple: true
+      options:
+        - Image / gallery
+        - HTML5 video
+        - YouTube
+        - Vimeo
+        - Inline HTML
+        - Iframe
+        - Google Maps
+        - PDF
+        - Not content-specific
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Markup and options are most helpful. A link to a minimal reproduction is even better.
+      placeholder: |
+        1. Bind with razorbox.bind('[data-razorbox]', { ... })
+        2. Open ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Console errors, screenshots or other context
