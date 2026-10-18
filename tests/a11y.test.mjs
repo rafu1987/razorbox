@@ -141,7 +141,7 @@ test('lightbox accessibility: dialog semantics, axe rules, focus management and 
     for (const items of [
       '[{type:"html",html:"<h2>Inline</h2><p>Accessible content</p>"}]',
       '[{type:"iframe",src:"/demo/iframe.html"}]',
-      '[{src:"/demo/assets/coast-waves.mp4",caption:"Video"}]'
+      '[{src:"/demo/assets/coast-rafu1987.mp4",caption:"Video"}]'
     ]) {
       await browser.eval(`window.razorboxDemo.open(${items})`)
       await waitUntil(() => browser.eval('document.querySelector(".razorbox").classList.contains("is-entered")'))
