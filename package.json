@@ -38,7 +38,11 @@
       "default": "./dist/razorbox.min.js"
     },
     "./css/min": "./dist/razorbox.min.css",
-    "./razorbox.min.js": "./dist/razorbox.min.js",
+    "./razorbox.min.js": {
+      "types": "./dist/razorbox.d.ts",
+      "import": "./dist/razorbox.min.js",
+      "default": "./dist/razorbox.min.js"
+    },
     "./razorbox.min.css": "./dist/razorbox.min.css"
   },
   "files": [
@@ -59,14 +63,17 @@
     "lint:js:fix": "standard --fix",
     "lint:css": "stylelint \"src/scss/**/*.scss\"",
     "lint:css:fix": "stylelint \"src/scss/**/*.scss\" --fix",
-    "release:check": "yarn lint:js && yarn lint:css && yarn test",
+    "lint:package": "publint --pack npm && attw --pack . --profile esm-only --exclude-entrypoints ./css ./razorbox.css ./scss ./css/min ./razorbox.min.css",
+    "release:check": "yarn lint:js && yarn lint:css && yarn test && yarn test:browser && yarn lint:package",
     "release": "np",
     "version": "yarn build && git add dist"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "axe-core": "^4.14.0",
     "c8": "^12.0.0",
     "np": "^12.1.1",
+    "publint": "^0.3.25",
     "sass": "^1.90.0",
     "standard": "^17.1.2",
     "stylelint": "^17.16.0",
