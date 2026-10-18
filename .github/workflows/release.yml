@@ -1,0 +1,79 @@
+name: Release
+
+# `yarn release` (np) bumps the version, commits, tags and pushes.
+# The pushed tag triggers this workflow, which publishes to npm with
+# provenance via npm trusted publishing (OIDC, no token) and creates the
+# GitHub release.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish to npm
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release
+      id-token: write # npm trusted publishing and provenance
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: yarn
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing requires npm 11.5.1 or newer.
+      - run: npm install -g npm@latest
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      - name: Verify tag, version and dist/
+        id: meta
+        env:
+          PRERELEASES_AS_LATEST: true
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+          if ! git diff --exit-code --stat -- dist/; then
+            echo "::error::The tagged dist/ does not match a fresh build."
+            exit 1
+          fi
+          # Prerelease channel: 1.2.0-alpha.3 -> "alpha"; 1.2.0 -> ""
+          channel=$(node -p "(require('./package.json').version.split('-')[1] || '').split('.')[0]")
+          # While razorbox is pre-1.0, every release (alphas included) goes to
+          # "latest". Set PRERELEASES_AS_LATEST to false once 1.0 is out to
+          # publish prereleases under their channel tag instead.
+          if [ -n "$channel" ] && [ "$PRERELEASES_AS_LATEST" != true ]; then dist_tag=$channel; else dist_tag=latest; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "dist-tag=$dist_tag" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$([ -n "$channel" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish
+        run: npm publish --provenance --access public --tag "${{ steps.meta.outputs.dist-tag }}"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.meta.outputs.version }}
+          PRERELEASE: ${{ steps.meta.outputs.prerelease }}
+        run: |
+          # Use the matching "## <version>" section of CHANGELOG.md when present.
+          awk -v v="$VERSION" '
+            /^## / { if (found) exit; if ($2 == v) { found = 1; next } }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          args=(--verify-tag --title "$GITHUB_REF_NAME")
+          if [ -s release-notes.md ]; then args+=(--notes-file release-notes.md); else args+=(--generate-notes); fi
+          if [ "$PRERELEASE" = true ]; then args+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" "${args[@]}"

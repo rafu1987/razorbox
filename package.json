@@ -55,6 +55,7 @@
   "scripts": {
     "dev": "vite --open /demo.html",
     "build": "vite build --mode readable && vite build --mode minified && node scripts/copy-types.mjs",
+    "build:demo": "vite build --config vite.demo.config.js",
     "test": "node --test tests/unit/ tests/package.test.mjs",
     "test:unit": "node --test tests/unit/",
     "test:coverage": "c8 --include=\"src/**/*.js\" --check-coverage --lines 95 --branches 90 --reporter=text --reporter=lcov node --test tests/unit/",
@@ -101,7 +102,9 @@
   ],
   "standard": {
     "ignore": [
-      "dist/"
+      "dist/",
+      "demo-dist/",
+      "coverage/"
     ],
     "env": [
       "browser"
@@ -110,7 +113,9 @@
   "np": {
     "message": "Release v%s",
     "testScript": "release:check",
-    "branch": "main"
+    "branch": "main",
+    "publish": false,
+    "releaseDraft": false
   },
   "lint-staged": {
     "{src,tests,scripts,demo}/**/*.{js,mjs}": "standard --fix",
