@@ -456,7 +456,7 @@ const _razorbox = class _razorbox {
             ${button("zoom", "Zoom in", `<span class="razorbox__icon-zoom-in">${icon("zoomIn")}</span><span class="razorbox__icon-zoom-out">${icon("zoomOut")}</span>`, 'aria-pressed="false"')}
             ${button("play", "Play slideshow", `<span class="razorbox__icon-play">${icon("play")}</span><span class="razorbox__icon-pause">${icon("pause")}</span>`, 'aria-pressed="false"')}
             ${button("fullscreen", "Enter fullscreen", `<span class="razorbox__icon-fullscreen">${icon("fullscreen")}</span><span class="razorbox__icon-fullscreen-exit">${icon("fullscreenExit")}</span>`, 'aria-pressed="false"')}
-            ${button("thumbs", "Show thumbnails", icon("thumbs"), 'aria-pressed="false" aria-expanded="false" aria-controls="${this._thumbPanelId}"')}
+            ${button("thumbs", "Show thumbnails", icon("thumbs"), `aria-pressed="false" aria-expanded="false" aria-controls="${this._thumbPanelId}"`)}
             ${button("close", "Close gallery", icon("close"))}
           </div>
         </div>
@@ -976,7 +976,7 @@ const _razorbox = class _razorbox {
       }
       if (!frame && slide.querySelector(".razorbox__video") && this.options.videoAutoplay) {
         const video = slide.querySelector(".razorbox__video");
-        void video.play().catch(() => {
+        video.play().catch(() => {
         });
       }
     };
@@ -1035,7 +1035,7 @@ const _razorbox = class _razorbox {
         completed = true;
         const decoded = typeof image.decode === "function" ? image.decode().catch(() => {
         }) : Promise.resolve();
-        void decoded.then(() => {
+        decoded.then(() => {
           if (sequence !== this._renderSequence || !this._isOpen) return;
           slide.classList.add("is-loaded");
           loader.hidden = true;
@@ -1329,7 +1329,7 @@ const _razorbox = class _razorbox {
         this.toggleZoom();
         return;
       case "fullscreen":
-        void this.toggleFullscreen();
+        this.toggleFullscreen();
         return;
       case "thumbs":
         this.toggleThumbnails();
@@ -1388,7 +1388,7 @@ const _razorbox = class _razorbox {
       case "f":
       case "F":
         event.preventDefault();
-        void this.toggleFullscreen();
+        this.toggleFullscreen();
         break;
       case "z":
       case "Z":
@@ -1573,7 +1573,7 @@ const _razorbox = class _razorbox {
     this._pinch = null;
     this._trackpadGesture = null;
     this._unlistenGlobal();
-    if (document.fullscreenElement === this._ui) void document.exitFullscreen().catch(() => {
+    if (document.fullscreenElement === this._ui) document.exitFullscreen().catch(() => {
     });
     if (_razorbox.activeInstance === this) _razorbox.activeInstance = null;
     const previousFocus = this._previousFocus;

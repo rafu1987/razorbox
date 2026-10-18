@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite';
-import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
 
 // Two library passes produce readable and minified ES modules plus separate CSS.
 export default defineConfig(({ mode }) => {
-  const minified = mode === 'minified';
-  const name = minified ? 'razorbox.min' : 'razorbox';
+  const minified = mode === 'minified'
+  const name = minified ? 'razorbox.min' : 'razorbox'
 
   return {
     build: {
@@ -21,5 +21,5 @@ export default defineConfig(({ mode }) => {
       cssMinify: minified ? 'esbuild' : false,
       sourcemap: true
     }
-  };
-});
+  }
+})

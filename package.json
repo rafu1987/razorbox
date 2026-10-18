@@ -54,10 +54,17 @@
     "test": "node --test tests/package.test.mjs",
     "test:browser": "node --test tests/browser.test.mjs",
     "lint:css": "stylelint \"src/scss/**/*.scss\"",
-    "lint:css:fix": "stylelint \"src/scss/**/*.scss\" --fix"
+    "lint:css:fix": "stylelint \"src/scss/**/*.scss\" --fix",
+    "lint:js": "standard",
+    "lint:js:fix": "standard --fix",
+    "release": "np",
+    "version": "yarn build && git add dist",
+    "release:check": "yarn lint:js && yarn lint:css && yarn test"
   },
   "devDependencies": {
+    "np": "^12.1.1",
     "sass": "^1.90.0",
+    "standard": "^17.1.2",
     "stylelint": "^17.16.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "stylelint-order": "^8.1.2",
@@ -77,5 +84,18 @@
     "video-lightbox",
     "youtube",
     "vimeo"
-  ]
+  ],
+  "standard": {
+    "ignore": [
+      "dist/"
+    ],
+    "env": [
+      "browser"
+    ]
+  },
+  "np": {
+    "message": "Release v%s",
+    "testScript": "release:check",
+    "branch": "main"
+  }
 }
