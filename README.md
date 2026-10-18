@@ -262,6 +262,8 @@ Releases are cut locally with [np](https://github.com/sindresorhus/np) and publi
 
 The changelog section is generated from the commit subjects since the last tag, grouped by prefix: `[!!!]` (breaking), `[SECURITY]`, `[FEATURE]`, `[BUGFIX]`, `[TASK]` and `[DOCS]`. Release and merge commits are skipped. To write the notes yourself instead, add a `## X.Y.Z` section to `CHANGELOG.md` before releasing and the script leaves it alone.
 
+With [Claude Code](https://claude.com/claude-code), saying "release new version" (or `/release`, `release minor`, `release 0.8.0`) runs the whole procedure, from the checks to verifying the published package. The steps live in [`.claude/skills/release/SKILL.md`](.claude/skills/release/SKILL.md).
+
 ## Security
 
 Please report vulnerabilities privately. See [SECURITY.md](SECURITY.md).
