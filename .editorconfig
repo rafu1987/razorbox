@@ -1,0 +1,47 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+charset = utf-8
+block_comment_start = /*
+block_comment = *
+block_comment_end = */
+
+# TS/JS-Files
+[*.{ts,js,mjs}]
+indent_size = 2
+
+# CSS/CSS-Files
+[*.{scss,css}]
+indent_size = 2
+
+# SH-Files
+[*.sh]
+indent_size = 2
+
+[*.json]
+indent_style = tab
+
+# Markdown-Files
+[*.{md,markdown}]
+max_line_length = 80
+
+# stylelint
+[.stylelintrc]
+indent_size = 2
+
+# package.json
+[package.json]
+indent_size = 2
+
+[*.svg]
+insert_final_newline = false
