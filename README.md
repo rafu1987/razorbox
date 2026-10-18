@@ -255,10 +255,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the project layout and all scripts.
 
 Releases are cut locally with [np](https://github.com/sindresorhus/np) and published by GitHub Actions with [npm provenance](https://docs.npmjs.com/generating-provenance-statements).
 
-1. Make sure `main` is clean and up to date, and add the new version's section to `CHANGELOG.md` (`## 0.7.0-alpha.7`).
+1. Make sure `main` is clean and up to date.
 2. Run `yarn release` and choose the version.
-3. np runs `release:check`, rebuilds `dist/`, commits `Release vX.Y.Z`, tags and pushes.
+3. np runs `release:check`, then the `version` script writes the new `CHANGELOG.md` section and rebuilds `dist/`. np commits `Release vX.Y.Z`, tags and pushes.
 4. The tag triggers the Release workflow. It runs CI, publishes to npm under `latest`, and creates the GitHub release from the changelog section.
+
+The changelog section is generated from the commit subjects since the last tag, grouped by prefix: `[!!!]` (breaking), `[SECURITY]`, `[FEATURE]`, `[BUGFIX]`, `[TASK]` and `[DOCS]`. Release and merge commits are skipped. To write the notes yourself instead, add a `## X.Y.Z` section to `CHANGELOG.md` before releasing and the script leaves it alone.
 
 ## Security
 

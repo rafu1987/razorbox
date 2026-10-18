@@ -55,7 +55,10 @@ Fix remaining findings in the code rather than adding disable comments.
   and the README when the public API changes.
 - Run `yarn build` and commit `dist/`. CI fails if `dist/` does not match a
   fresh build.
-- Add an entry to `CHANGELOG.md`.
+- Start commit subjects with a prefix: `[FEATURE]`, `[BUGFIX]`, `[TASK]`,
+  `[DOCS]` or `[SECURITY]`, plus `[!!!]` for breaking changes (for example
+  `[!!!][FEATURE] Rename option`). `CHANGELOG.md` is generated from them
+  at release time, so write subjects for users to read.
 - New UI must stay keyboard accessible and pass the axe checks in
   `tests/a11y.test.mjs`.
 

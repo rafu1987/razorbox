@@ -67,7 +67,7 @@
     "lint:package": "publint --pack npm && attw --pack . --profile esm-only --exclude-entrypoints ./css ./razorbox.css ./scss ./css/min ./razorbox.min.css",
     "release:check": "yarn lint:js && yarn lint:css && yarn test && yarn test:browser && yarn lint:package",
     "release": "np",
-    "version": "yarn build && git add dist",
+    "version": "node scripts/changelog.mjs && yarn build && git add dist CHANGELOG.md",
     "prepare": "husky"
   },
   "devDependencies": {
