@@ -23,7 +23,7 @@ yarn dev       # demo page with hot reload at /demo.html
 | `src/options.js`, `src/icons.js`, `src/utils.js` | Defaults, SVG icons, small helpers |
 | `src/scss/` | Stylesheet, published separately from the JS |
 | `src/razorbox.d.ts` | Hand-written TypeScript declarations |
-| `demo.html`, `demo/` | Demo page, also used by the browser tests |
+| `demo.html`, `demo/` | Demo page, also used by the browser tests. Photo and video credits are in `demo/assets/photos/CREDITS.md` |
 | `tests/unit/` | Fast Node tests for the pure modules |
 | `tests/browser.test.mjs`, `tests/a11y.test.mjs` | Headless Chrome tests, incl. axe-core |
 
@@ -41,6 +41,8 @@ tested.
 | `yarn test:browser` | Browser and accessibility tests (needs Chrome or Chromium) |
 | `yarn lint:package` | publint and Are the Types Wrong on the packed package |
 | `yarn release:check` | Everything above, as run before a release |
+| `yarn build:demo` | Static build of the demo page for GitHub Pages |
+| `yarn build:demo-pdf` | Re-renders the demo's README PDF; run it after README changes |
 
 The browser tests look for Chrome in the usual Linux and macOS locations. Set
 `CHROMIUM_PATH` to use another binary.

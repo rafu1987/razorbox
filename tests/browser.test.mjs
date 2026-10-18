@@ -15,7 +15,7 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   await browser.eval('document.querySelector("[data-example-tab=youtube]").click()')
   assert.equal(await browser.eval('document.querySelector("[data-example-panel=youtube]").hidden'), false)
   assert.equal(await browser.eval('document.querySelector("[data-example-panel=gallery]").hidden'), true)
-  assert.equal(await browser.eval('document.querySelector("[data-example-panel=youtube] code").textContent.includes("lPYHfdapsEY")'), true)
+  assert.equal(await browser.eval('document.querySelector("[data-example-panel=youtube] code").textContent.includes("C9f88SVNHxA")'), true)
 
   if (process.env.RAZORBOX_PAGE_SCREENSHOT) {
     const preview = await browser.call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
@@ -59,7 +59,7 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   await waitUntil(() => browser.eval('Number(getComputedStyle(document.querySelector(".razorbox__backdrop")).opacity) >= .999'))
   await waitUntil(() => browser.eval('Boolean(window.razorboxDemo.isOpen && document.querySelector(".razorbox__slide.is-loaded"))'))
   assert.equal(await browser.eval('document.querySelector(".razorbox__counter").textContent'), '1 / 6')
-  assert.equal(await browser.eval('document.querySelector(".razorbox__caption").textContent'), 'Golden Hour - Warm dunes after sunset')
+  assert.equal(await browser.eval('document.querySelector(".razorbox__caption").textContent'), 'Golden Hour - Warm dunes after sunset · Photo: Zetong Li / Unsplash')
   // Captions should occupy their own row beneath the actual image, not
   // overlap it or paint a gradient behind the overlay controls.
   const initialCaptionLayout = await browser.eval(`(() => {
@@ -173,8 +173,8 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   assert.equal(overlapping.oldTransform, 'matrix(1, 0, 0, 1, 0, 0)')
   assert.equal(overlapping.newTransform, 'matrix(1, 0, 0, 1, 0, 0)')
   assert.ok(overlapping.oldOpacity >= 0 && overlapping.newOpacity >= 0)
-  assert.equal(overlapping.oldCaption, 'Golden Hour - Warm dunes after sunset')
-  assert.equal(overlapping.newCaption, 'Northern Peaks - Frozen ridgelines in pale blue')
+  assert.equal(overlapping.oldCaption, 'Golden Hour - Warm dunes after sunset · Photo: Zetong Li / Unsplash')
+  assert.equal(overlapping.newCaption, 'Northern Peaks - Snow ridges under a pale pink sky · Photo: Etienne Bösiger / Unsplash')
   assert.equal(await browser.eval('document.querySelector(".razorbox__counter").textContent'), '2 / 6')
   await waitUntil(() => browser.eval('document.querySelector(".razorbox__slide.is-active").classList.contains("is-loaded")'))
   await browser.eval('document.querySelector("[data-rb-action=zoom]").click()')
@@ -406,14 +406,14 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   await waitUntil(() => browser.eval('Boolean(document.querySelector(".razorbox__video") && !document.querySelector(".razorbox__video").paused)'), 9000)
   await browser.eval('window.razorboxDemo.next()')
   assert.equal(await browser.eval('document.querySelector(".razorbox__video")?.paused'), true)
-  await waitUntil(() => browser.eval('document.querySelector(".razorbox__iframe")?.src.includes("youtube-nocookie.com/embed/lPYHfdapsEY" )'))
+  await waitUntil(() => browser.eval('document.querySelector(".razorbox__iframe")?.src.includes("youtube-nocookie.com/embed/C9f88SVNHxA" )'))
   // Playback starts through the player API (keeps the iOS user gesture), never via autoplay=1.
   assert.equal(await browser.eval('document.querySelector(".razorbox__iframe").src.includes("autoplay=1")'), false)
   assert.equal(await browser.eval('document.querySelector(".razorbox__iframe").src.includes("enablejsapi=1")'), true)
   assert.equal(await browser.eval('new URL(document.querySelector(".razorbox__iframe").src).searchParams.has("mute")'), false)
   assert.equal(await browser.eval('new URL(document.querySelector(".razorbox__iframe").src).hostname'), 'www.youtube-nocookie.com')
   await browser.eval('window.razorboxDemo.next()')
-  await waitUntil(() => browser.eval('document.querySelector(".razorbox__iframe")?.src.includes("player.vimeo.com/video/253905163" )'))
+  await waitUntil(() => browser.eval('document.querySelector(".razorbox__iframe")?.src.includes("player.vimeo.com/video/155404383" )'))
   assert.equal(await browser.eval('document.querySelector(".razorbox__iframe").src.includes("muted=0")'), true)
   assert.equal(await browser.eval('new URL(document.querySelector(".razorbox__iframe").src).searchParams.get("dnt")'), '1')
   await browser.eval('window.razorboxDemo.close(true)')
@@ -550,7 +550,7 @@ test('gallery, thumbs, zoom, playback, keyboard, second gallery and close', { sk
   // PDFs automatically use the browser's viewer, with an always-accessible
   // link for disabled viewers, CSP restrictions, and download-only servers.
   await browser.eval(`(() => {
-    window.razorboxDemo.open([{src:'./demo/assets/razorbox-demo.pdf'}]);
+    window.razorboxDemo.open([{src:'./demo/assets/razorbox-readme.pdf'}]);
   })()`)
   assert.equal(await browser.eval('window.razorboxDemo.items[0].type'), 'pdf')
   assert.equal(await browser.eval('document.querySelector(".razorbox__media--pdf") !== null'), true)

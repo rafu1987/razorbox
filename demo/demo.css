@@ -1326,6 +1326,11 @@ pre code {
   font-size: 12px;
 }
 
+.footer__credits a {
+  color: var(--paper-dim);
+  text-underline-offset: 3px;
+}
+
 .footer__top {
   margin-top: 8px;
   color: var(--paper-dim);

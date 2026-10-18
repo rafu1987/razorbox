@@ -3,7 +3,7 @@ import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { existsSync, readFileSync } from 'node:fs'
-import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -42,7 +42,7 @@ export async function waitUntil (predicate, timeoutMs = 7000) {
   throw new Error('Timed out waiting for browser readiness.')
 }
 
-const contentTypes = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.pdf': 'application/pdf' }
+const contentTypes = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.json': 'application/json', '.mp4': 'video/mp4', '.pdf': 'application/pdf' }
 
 async function startServer () {
   const server = createServer(async (req, res) => {
@@ -66,13 +66,12 @@ async function loadInlineFixture (browser) {
   // even localhost navigation. Test fixture styles are authored into the page
   // before the library starts, never injected by razorbox itself.
   let html = await readFile(path.join(projectRoot, 'demo.html'), 'utf8')
-  const files = await readdir(path.join(projectRoot, 'demo/assets'))
-  for (const file of files.filter(name => name.endsWith('.svg'))) {
-    const svg = await readFile(path.join(projectRoot, 'demo/assets', file))
-    html = html.replaceAll(`./demo/assets/${file}`, `data:image/svg+xml;base64,${svg.toString('base64')}`)
+  // Inline every local media file the page links to as a data: URL.
+  const mime = { '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp4': 'video/mp4' }
+  for (const ref of new Set(html.match(/\.\/demo\/assets\/[\w./-]+\.(?:jpg|svg|mp4)/g) || [])) {
+    const data = await readFile(path.join(projectRoot, ref))
+    html = html.replaceAll(ref, `data:${mime[path.extname(ref)]};base64,${data.toString('base64')}`)
   }
-  const video = await readFile(path.join(projectRoot, 'demo/assets/demo-motion.mp4'))
-  html = html.replaceAll('./demo/assets/demo-motion.mp4', `data:video/mp4;base64,${video.toString('base64')}`)
   const body = html.split('<body>')[1].split('</body>')[0]
   const demoCss = await readFile(path.join(projectRoot, 'demo/demo.css'), 'utf8')
   const libraryCss = await readFile(path.join(projectRoot, 'dist/razorbox.css'), 'utf8')
