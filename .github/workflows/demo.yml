@@ -36,6 +36,8 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn build:demo
+        env:
+          CHROMIUM_PATH: /usr/bin/google-chrome
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

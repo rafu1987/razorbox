@@ -92,11 +92,17 @@ const work = await mkdtemp(path.join(os.tmpdir(), 'razorbox-pdf-'))
 try {
   const page = path.join(work, 'readme.html')
   await writeFile(page, html)
-  execFileSync(browser, [
-    '--headless=new', '--disable-gpu', '--no-pdf-header-footer', `--user-data-dir=${path.join(work, 'profile')}`,
-    '--virtual-time-budget=4000', '--allow-file-access-from-files',
-    `--print-to-pdf=${output}`, pathToFileURL(page).href
-  ], { stdio: 'ignore' })
+  // Linux CI runners block Chrome's sandbox, as in the browser tests.
+  const linux = process.platform === 'linux' ? ['--no-sandbox', '--disable-dev-shm-usage'] : []
+  try {
+    execFileSync(browser, [
+      '--headless=new', '--disable-gpu', ...linux, '--no-pdf-header-footer', `--user-data-dir=${path.join(work, 'profile')}`,
+      '--virtual-time-budget=4000', '--allow-file-access-from-files',
+      `--print-to-pdf=${output}`, pathToFileURL(page).href
+    ], { stdio: ['ignore', 'ignore', 'pipe'] })
+  } catch (error) {
+    throw new Error(`${browser} could not print the PDF:\n${error.stderr?.toString().trim() || error.message}`)
+  }
 } finally {
   await rm(work, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
 }
