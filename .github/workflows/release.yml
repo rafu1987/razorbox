@@ -20,6 +20,12 @@ jobs:
     name: Publish to npm
     needs: ci
     runs-on: ubuntu-latest
+    env:
+      # While razorbox is pre-1.0, every release (alphas included) is published
+      # as "latest" on npm and marked "Latest" on GitHub. Set to false once 1.0
+      # is out to publish prereleases under their channel tag and mark them as
+      # GitHub pre-releases.
+      PRERELEASES_AS_LATEST: true
     permissions:
       contents: write # create the GitHub release
       id-token: write # npm trusted publishing and provenance
@@ -37,8 +43,6 @@ jobs:
 
       - name: Verify tag, version and dist/
         id: meta
-        env:
-          PRERELEASES_AS_LATEST: true
         run: |
           version=$(node -p "require('./package.json').version")
           if [ "v$version" != "$GITHUB_REF_NAME" ]; then
@@ -51,9 +55,6 @@ jobs:
           fi
           # Prerelease channel: 1.2.0-alpha.3 -> "alpha"; 1.2.0 -> ""
           channel=$(node -p "(require('./package.json').version.split('-')[1] || '').split('.')[0]")
-          # While razorbox is pre-1.0, every release (alphas included) goes to
-          # "latest". Set PRERELEASES_AS_LATEST to false once 1.0 is out to
-          # publish prereleases under their channel tag instead.
           if [ -n "$channel" ] && [ "$PRERELEASES_AS_LATEST" != true ]; then dist_tag=$channel; else dist_tag=latest; fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "dist-tag=$dist_tag" >> "$GITHUB_OUTPUT"
@@ -75,5 +76,9 @@ jobs:
           ' CHANGELOG.md > release-notes.md
           args=(--verify-tag --title "$GITHUB_REF_NAME")
           if [ -s release-notes.md ]; then args+=(--notes-file release-notes.md); else args+=(--generate-notes); fi
-          if [ "$PRERELEASE" = true ]; then args+=(--prerelease); fi
+          if [ "$PRERELEASE" = true ] && [ "$PRERELEASES_AS_LATEST" != true ]; then
+            args+=(--prerelease)
+          else
+            args+=(--latest)
+          fi
           gh release create "$GITHUB_REF_NAME" "${args[@]}"
