@@ -6,7 +6,7 @@ on the approach before you invest time.
 
 ## Setup
 
-Requires Node.js 20.19 or newer and Yarn 1.
+Requires Node.js 22 or newer and Yarn 1.
 
 ```bash
 yarn install   # also installs the pre-commit hook
