@@ -60,8 +60,11 @@ yarn release:check
 npm version <bump> -m "Release v%s"
 ```
 
-If your session's instructions ask for a commit attribution trailer, add it as a
-second `-m` argument. Read the new version afterwards with
+`npm version` uses only the **last** `-m`, so never pass a second one (it would
+replace the subject). If your session's instructions ask for a commit attribution
+trailer, put it into the same message with line breaks, e.g. in bash/zsh:
+`npm version <bump> -m $'Release v%s\n\nCo-Authored-By: …'`. Check the result
+with `git log -1 --format=%s`; it must read `Release v<new-version>`. Read the new version afterwards with
 `node -p "require('./package.json').version"` and use it as `<new-version>` below.
 
 - `yarn release:check` runs lint, unit, package, browser, accessibility and
