@@ -58,6 +58,51 @@ document.getElementById('open-hero-gallery').addEventListener('click', event => 
   openGallery()
 })
 
+// Minimal highlighting for the example snippets; the copy buttons still copy
+// the plain text. Classes match the hand-written main.js panel at the bottom.
+const escapeHtml = text => text.replace(/[&<>]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char])
+const SYNTAX = {
+  html: [
+    [/<!--[\s\S]*?-->/y, 'comment'],
+    [/<\/?[\w-]+/y, 'violet'],
+    [/[\w-]+(?==)/y, 'blue'],
+    [/"[^"]*"/y, 'green'],
+    [/\/?>/y, 'violet']
+  ],
+  js: [
+    [/\/\/[^\n]*/y, 'comment'],
+    [/'[^']*'/y, 'green'],
+    [/\b(?:import|from|const|let|new|return)\b/y, 'violet'],
+    [/\b(?:true|false|null|\d+)\b/y, 'violet'],
+    [/\brazorbox\b/y, 'blue']
+  ]
+}
+
+function highlight (code, language) {
+  const rules = SYNTAX[language]
+  const text = code.textContent
+  let html = ''
+  let plain = ''
+  for (let index = 0; index < text.length;) {
+    const match = rules.map(([pattern, kind]) => {
+      pattern.lastIndex = index
+      return pattern.exec(text) && [pattern.lastIndex, kind]
+    }).find(Boolean)
+    if (!match) {
+      plain += text[index++]
+      continue
+    }
+    html += escapeHtml(plain) + `<span class="syntax-${match[1]}">${escapeHtml(text.slice(index, match[0]))}</span>`
+    plain = ''
+    index = match[0]
+  }
+  code.innerHTML = html + escapeHtml(plain)
+}
+
+for (const code of document.querySelectorAll('[data-example-panel] pre code')) {
+  highlight(code, code.closest('[data-example-panel]').dataset.examplePanel === 'js' ? 'js' : 'html')
+}
+
 // The snippets are real text in demo.html, not injected by the lightbox.
 for (const tab of document.querySelectorAll('[data-example-tab]')) {
   tab.addEventListener('click', () => {
