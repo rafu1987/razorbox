@@ -183,9 +183,12 @@ body {
     transition: bottom var(--rb-transition) cubic-bezier(.2, .75, .25, 1);
   }
 
+  // The slides form their own compositing group, so the crossfade below
+  // blends them with each other only, never with the backdrop.
   &__stage {
     position: absolute;
     inset: 0;
+    isolation: isolate;
     overflow: hidden;
     touch-action: none;
     user-select: none;
@@ -226,8 +229,24 @@ body {
       pointer-events: auto; opacity: 1; transform: translate3d(0, 0, 0);
     }
 
+    // Crossfade without a dip: with plus-lighter, the incoming (opacity a) and
+    // outgoing (1 - a) slides add up to fully opaque where they overlap, so the
+    // translucent backdrop never shows through, while the parts of a larger
+    // outgoing image still fade out in sync. Browsers without plus-lighter keep
+    // a normal crossfade.
+    @supports (mix-blend-mode: plus-lighter) {
+      mix-blend-mode: plus-lighter;
+    }
+
     &.is-leaving {
-      pointer-events: none; opacity: 0;
+      pointer-events: none;
+      opacity: 0;
+
+      // Captions have no background: fade the old one out faster.
+      .razorbox__caption {
+        opacity: 0;
+        transition: opacity calc(var(--rb-content-duration) * .5) ease;
+      }
     }
   }
 
@@ -246,6 +265,15 @@ body {
 
         &.is-active {
           transform: translate3d(0, 0, 0);
+        }
+
+        // Slides do not overlap, so no blending; the caption slides out with its slide.
+        mix-blend-mode: normal;
+
+        &.is-leaving {
+          .razorbox__caption {
+            opacity: 1;
+          }
         }
 
         &.is-leaving.to-left {

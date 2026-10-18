@@ -139,6 +139,7 @@ body.razorbox-scroll-lock {
 .razorbox__stage {
   position: absolute;
   inset: 0;
+  isolation: isolate;
   overflow: hidden;
   touch-action: none;
   user-select: none;
@@ -170,9 +171,18 @@ body.razorbox-scroll-lock {
   opacity: 1;
   transform: translate3d(0, 0, 0);
 }
+@supports (mix-blend-mode: plus-lighter) {
+  .razorbox__slide {
+    mix-blend-mode: plus-lighter;
+  }
+}
 .razorbox__slide.is-leaving {
   pointer-events: none;
   opacity: 0;
+}
+.razorbox__slide.is-leaving .razorbox__caption {
+  opacity: 0;
+  transition: opacity calc(var(--rb-content-duration) * 0.5) ease;
 }
 .razorbox--slide .razorbox__slide {
   opacity: 1;
@@ -185,6 +195,12 @@ body.razorbox-scroll-lock {
 }
 .razorbox--slide .razorbox__slide.is-active {
   transform: translate3d(0, 0, 0);
+}
+.razorbox--slide .razorbox__slide {
+  mix-blend-mode: normal;
+}
+.razorbox--slide .razorbox__slide.is-leaving .razorbox__caption {
+  opacity: 1;
 }
 .razorbox--slide .razorbox__slide.is-leaving.to-left {
   transform: translate3d(-100%, 0, 0);
