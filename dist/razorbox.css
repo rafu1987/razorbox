@@ -713,6 +713,43 @@ body.razorbox-scroll-lock {
     height: min(76dvh, 700px);
   }
 }
+@media (height <= 500px) {
+  .razorbox__slide {
+    padding: calc(var(--rb-button-size) + var(--rb-toolbar-inset) * 2) 64px 8px;
+  }
+  .razorbox__slide[data-rb-type=image], .razorbox__slide[data-rb-type=video], .razorbox__slide[data-rb-type=youtube], .razorbox__slide[data-rb-type=vimeo] {
+    padding: 0;
+  }
+  .razorbox__slide:not([data-rb-type=image]) .razorbox__caption {
+    display: none;
+  }
+  .razorbox__slide[data-rb-type=video] .razorbox__media, .razorbox__slide[data-rb-type=youtube] .razorbox__media, .razorbox__slide[data-rb-type=vimeo] .razorbox__media {
+    width: auto;
+    height: 100%;
+  }
+  .razorbox__slide[data-rb-type=iframe] .razorbox__media {
+    width: min(100%, 1120px);
+    height: 100%;
+  }
+  .razorbox__media--map, .razorbox__media--pdf {
+    width: min(100%, 1100px);
+    height: 100%;
+  }
+  .razorbox__arrow {
+    width: 44px;
+    height: 44px;
+  }
+  .razorbox__arrow--prev {
+    left: 8px;
+  }
+  .razorbox__arrow--next {
+    right: 8px;
+  }
+  .razorbox__arrow svg {
+    width: 26px;
+    height: 26px;
+  }
+}
 @media (width <= 355px) {
   .razorbox {
     --rb-button-size: 40px;

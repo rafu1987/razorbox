@@ -51,5 +51,6 @@ describe('DEFAULT_OPTIONS', () => {
     assert.equal(DEFAULT_OPTIONS.videoPrivacy, true)
     assert.equal(DEFAULT_OPTIONS.captionHtml, false)
     assert.equal(DEFAULT_OPTIONS.keyboard, true)
+    assert.equal(DEFAULT_OPTIONS.thumbsMinHeight, 500)
   })
 })

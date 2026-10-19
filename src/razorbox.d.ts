@@ -26,6 +26,8 @@ export interface razorboxOptions {
   loop?: boolean;
   thumbnails?: boolean;
   thumbsOpen?: boolean;
+  /** Below this viewport height in pixels (phones in landscape), the thumbnail rail starts hidden. Default 500; 0 disables it. */
+  thumbsMinHeight?: number;
   slideshow?: boolean;
   autoplay?: boolean;
   slideshowInterval?: number;

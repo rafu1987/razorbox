@@ -3,6 +3,7 @@ export const DEFAULT_OPTIONS = Object.freeze({
   loop: true,
   thumbnails: true,
   thumbsOpen: false,
+  thumbsMinHeight: 500,
   slideshow: true,
   autoplay: false,
   slideshowInterval: 3500,

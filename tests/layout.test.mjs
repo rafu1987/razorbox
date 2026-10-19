@@ -96,3 +96,57 @@ test('backdrop and inline HTML follow the theme', { skip }, t => withDemo(t, asy
   }
   await browser.eval(`window.razorboxDemo.options.theme = ${JSON.stringify(previousTheme)}; true`)
 }))
+
+// Phones in landscape: the desktop padding, the caption and the thumbnail
+// rail left a video about 80px tall.
+test('content fills short landscape screens and the rail makes room', { skip }, t => withDemo(t, async browser => {
+  const size = (width, height) => browser.call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 3, mobile: true })
+  const state = `(() => {
+    const slide = document.querySelector('.razorbox__slide.is-active')
+    const media = slide.querySelector('.razorbox__media').getBoundingClientRect()
+    const caption = slide.querySelector('.razorbox__caption')
+    return {
+      height: media.height,
+      ratio: media.width / media.height,
+      caption: caption ? getComputedStyle(caption).display : 'none',
+      thumbs: document.querySelector('.razorbox').classList.contains('is-thumbs-open')
+    }
+  })()`
+  await browser.eval('window.razorboxDemo.options.thumbsOpen = true; true')
+  await size(844, 390)
+  for (const selector of ['.media-card[data-type=video]', '.media-card[href*=youtube]', '.media-card[href*=vimeo]']) {
+    await openCard(browser, selector)
+    const video = await browser.eval(state)
+    assert.equal(video.height, 390, `${selector}: the player takes the full height`)
+    assert.ok(Math.abs(video.ratio - 16 / 9) < 0.01, `${selector}: the player stays 16:9`)
+    assert.equal(video.caption, 'none', `${selector}: no caption over the video controls`)
+    assert.equal(video.thumbs, false, `${selector}: the rail starts hidden on a short screen`)
+    await close(browser)
+  }
+  for (const selector of ['.media-card[data-type=html]', '.media-card[data-type=iframe]', '.media-card[href$=".pdf"]']) {
+    await openCard(browser, selector)
+    const content = await browser.eval(state)
+    assert.ok(content.height >= 280, `${selector}: ${content.height}px of 390px for the content`)
+    await close(browser)
+  }
+
+  // Turning the phone hides the rail and brings it back.
+  await size(390, 844)
+  await openCard(browser, '.media-card[data-type=video]')
+  assert.equal((await browser.eval(state)).thumbs, true, 'Portrait shows the rail')
+  await size(844, 390)
+  await sleep(400)
+  assert.equal((await browser.eval(state)).thumbs, false, 'Landscape hides the rail')
+  await size(390, 844)
+  await sleep(400)
+  assert.equal((await browser.eval(state)).thumbs, true, 'Back in portrait, the rail returns')
+
+  // Showing it by hand on a short screen survives Safari's toolbar resizing the viewport.
+  await size(844, 390)
+  await sleep(400)
+  await browser.eval('window.razorboxDemo.toggleThumbnails(); true')
+  await size(844, 340)
+  await sleep(400)
+  assert.equal((await browser.eval(state)).thumbs, true, 'A manually opened rail stays open')
+  await close(browser)
+}))

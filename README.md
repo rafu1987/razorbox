@@ -128,6 +128,7 @@ lightbox.open([
 | `loop` | `true` | Wrap from the last item to the first and back. |
 | `thumbnails` | `true` | Enable the thumbnail rail and its toolbar button. |
 | `thumbsOpen` | `false` | Show the thumbnail rail when opening. |
+| `thumbsMinHeight` | `500` | Below this viewport height in pixels, such as on phones in landscape, the rail starts hidden and hides when the screen turns. The thumbnails button still shows it. `0` disables this. |
 | `slideshow` | `true` | Enable the slideshow button. |
 | `autoplay` | `false` | Start the slideshow on open (image galleries only). |
 | `slideshowInterval` | `3500` | Slideshow delay in milliseconds. |

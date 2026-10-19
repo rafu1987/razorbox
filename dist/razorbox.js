@@ -5,6 +5,7 @@ const DEFAULT_OPTIONS = Object.freeze({
   loop: true,
   thumbnails: true,
   thumbsOpen: false,
+  thumbsMinHeight: 500,
   slideshow: true,
   autoplay: false,
   slideshowInterval: 3500,
@@ -353,6 +354,8 @@ const _razorbox = class _razorbox {
     this._isOpen = false;
     this._playing = false;
     this._thumbsOpen = false;
+    this._thumbsAutoHidden = false;
+    this._shortScreen = false;
     this._zoom = 1;
     this._panX = 0;
     this._panY = 0;
@@ -630,7 +633,9 @@ const _razorbox = class _razorbox {
     this._isOpen = true;
     this._playing = false;
     this._resumeAfterVisibility = false;
-    this._thumbsOpen = Boolean(this.options.thumbnails && this.options.thumbsOpen && valid.length > 1);
+    this._shortScreen = this._isShortScreen();
+    this._thumbsAutoHidden = Boolean(this.options.thumbnails && this.options.thumbsOpen && valid.length > 1 && this._shortScreen);
+    this._thumbsOpen = Boolean(this.options.thumbnails && this.options.thumbsOpen && valid.length > 1 && !this._shortScreen);
     this._preloadCache.clear();
     this._visibleSlide = null;
     this._slide = null;
@@ -719,6 +724,7 @@ const _razorbox = class _razorbox {
   toggleThumbnails() {
     if (!this._isOpen || !this.options.thumbnails || this._items.length < 2) return;
     this._thumbsOpen = !this._thumbsOpen;
+    this._thumbsAutoHidden = false;
     this._updateThumbs();
   }
   _onThumbPointerDown(event) {
@@ -1445,6 +1451,26 @@ const _razorbox = class _razorbox {
   }
   _onResize() {
     this._clampPan();
+    this._fitThumbs();
+  }
+  _isShortScreen() {
+    return window.innerHeight < (Number(this.options.thumbsMinHeight) || 0);
+  }
+  // Turning the phone hides the rail and brings it back. Only crossing the
+  // threshold counts, so Safari's toolbar resizes and manual toggles stay.
+  _fitThumbs() {
+    const short = this._isShortScreen();
+    if (!this._isOpen || short === this._shortScreen) return;
+    this._shortScreen = short;
+    if (short && this._thumbsOpen) {
+      this._thumbsOpen = false;
+      this._thumbsAutoHidden = true;
+      this._updateThumbs();
+    } else if (!short && this._thumbsAutoHidden) {
+      this._thumbsOpen = true;
+      this._thumbsAutoHidden = false;
+      this._updateThumbs();
+    }
   }
   _onPointerDown(event) {
     if (!this._isOpen || !this._slide?.classList.contains("is-loaded") || this._items[this._index].type !== "image") return;
