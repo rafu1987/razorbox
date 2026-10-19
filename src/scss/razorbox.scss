@@ -77,6 +77,10 @@ body {
   // Non-standard (WebKit only); autoprefixer cannot add these, so they stay.
   -webkit-font-smoothing: antialiased;
 
+  // iOS Safari enlarges text in landscape ("text autosizing"), but only in
+  // slides inserted after the first, so captions grew on prev/next.
+  text-size-adjust: 100%;
+
   &[data-theme="light"] {
     --rb-background: rgb(247 247 250 / .95);
     --rb-toolbar-background: rgb(228 229 234 / .97);
