@@ -2,7 +2,7 @@
 
 // razorbox - standalone SCSS. Vite extracts it into a separate CSS asset.
 // Customize the Sass defaults with @use 'razorbox/scss' with (...), or override CSS custom properties.
-$razorbox-background: rgb(19 19 21 / .93) !default;
+$razorbox-background: rgb(19 19 21 / .95) !default;
 $razorbox-toolbar-background: rgb(30 30 32 / .82) !default;
 $razorbox-thumbnails-background: #202023 !default;
 $razorbox-icon-color: rgb(255 255 255 / .85) !default;
@@ -30,7 +30,7 @@ body {
     }
   }
 
-  --rb-background: rgb(19 19 21 / .83);
+  --rb-background: #{$razorbox-background};
   --rb-backdrop-duration: 366ms;
   --rb-toolbar-background: #{$razorbox-toolbar-background};
   --rb-toolbar-hover: rgb(12 12 14 / .98);
@@ -77,7 +77,7 @@ body {
   -webkit-font-smoothing: antialiased;
 
   &[data-theme="light"] {
-    --rb-background: rgb(247 247 250 / .83);
+    --rb-background: rgb(247 247 250 / .95);
     --rb-toolbar-background: rgb(228 229 234 / .97);
     --rb-toolbar-hover: #d3d5dd;
     --rb-thumbnails-background: #edecf1;
@@ -99,7 +99,7 @@ body {
 @media (prefers-color-scheme: light) {
   .razorbox {
     &[data-theme="auto"] {
-      --rb-background: rgb(247 247 250 / .83);
+      --rb-background: rgb(247 247 250 / .95);
       --rb-toolbar-background: rgb(228 229 234 / .97);
       --rb-toolbar-hover: #d3d5dd;
       --rb-thumbnails-background: #edecf1;

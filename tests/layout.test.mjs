@@ -1,4 +1,4 @@
-/* Scroll lock and arrow placement in a real browser. */
+/* Scroll lock, arrow placement and backdrop in a real browser. */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { chromium, sleep, waitUntil, withDemo } from './helpers/browser.mjs'
@@ -64,4 +64,16 @@ test('the arrows are centered on every content type', { skip }, t => withDemo(t,
     assert.ok(offset.content <= 1, `Phone, ${selector}: arrows ${offset.content.toFixed(1)}px off the content's center`)
     await close(browser)
   }
+}))
+
+// Issue #2: a denser backdrop, in both themes.
+test('the backdrop is dense enough to hide the page', { skip }, t => withDemo(t, async browser => {
+  const previousTheme = await browser.eval('window.razorboxDemo.options.theme')
+  for (const [theme, expected] of [['dark', 'rgba(19, 19, 21, 0.95)'], ['light', 'rgba(247, 247, 250, 0.95)']]) {
+    await browser.eval(`window.razorboxDemo.options.theme = ${JSON.stringify(theme)}; true`)
+    await openCard(browser, '.gallery-card')
+    assert.equal(await browser.eval('getComputedStyle(document.querySelector(".razorbox__backdrop")).backgroundColor'), expected, `${theme}: backdrop`)
+    await close(browser)
+  }
+  await browser.eval(`window.razorboxDemo.options.theme = ${JSON.stringify(previousTheme)}; true`)
 }))

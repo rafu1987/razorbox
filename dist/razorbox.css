@@ -7,7 +7,7 @@ body.razorbox-scroll-lock {
   margin-right: var(--rb-scrollbar-width, 0);
 }
 .razorbox {
-  --rb-background: rgb(19 19 21 / .83);
+  --rb-background: rgba(19, 19, 21, 0.95);
   --rb-backdrop-duration: 366ms;
   --rb-toolbar-background: rgba(30, 30, 32, 0.82);
   --rb-toolbar-hover: rgb(12 12 14 / .98);
@@ -48,7 +48,7 @@ body.razorbox-scroll-lock {
   -webkit-font-smoothing: antialiased;
 }
 .razorbox[data-theme=light] {
-  --rb-background: rgb(247 247 250 / .83);
+  --rb-background: rgb(247 247 250 / .95);
   --rb-toolbar-background: rgb(228 229 234 / .97);
   --rb-toolbar-hover: #d3d5dd;
   --rb-thumbnails-background: #edecf1;
@@ -68,7 +68,7 @@ body.razorbox-scroll-lock {
 
 @media (prefers-color-scheme: light) {
   .razorbox[data-theme=auto] {
-    --rb-background: rgb(247 247 250 / .83);
+    --rb-background: rgb(247 247 250 / .95);
     --rb-toolbar-background: rgb(228 229 234 / .97);
     --rb-toolbar-hover: #d3d5dd;
     --rb-thumbnails-background: #edecf1;
