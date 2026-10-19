@@ -366,6 +366,7 @@ const _razorbox = class _razorbox {
     this._thumbDrag = null;
     this._scrollCompensation = null;
     this._scrollLocked = false;
+    this._scrollPosition = null;
     this._closeTimer = null;
     this._closeTransitionHandler = null;
     this._slideTimer = null;
@@ -383,6 +384,7 @@ const _razorbox = class _razorbox {
     this._onVisibility = this._onVisibility.bind(this);
     this._onFullscreenChange = this._onFullscreenChange.bind(this);
     this._onResize = this._onResize.bind(this);
+    this._onLockedScroll = this._onLockedScroll.bind(this);
     this._onPointerDown = this._onPointerDown.bind(this);
     this._onPointerMove = this._onPointerMove.bind(this);
     this._onPointerUp = this._onPointerUp.bind(this);
@@ -568,11 +570,19 @@ const _razorbox = class _razorbox {
     html.style.setProperty("--rb-scrollbar-width", `${width}px`);
     html.classList.toggle("razorbox-had-scrollbar", width > 0);
     body.classList.add("razorbox-scroll-lock");
+    this._scrollPosition = { left: window.scrollX, top: window.scrollY };
+    window.addEventListener("scroll", this._onLockedScroll);
     this._scrollLocked = true;
+  }
+  _onLockedScroll() {
+    const { left, top } = this._scrollPosition;
+    if (window.scrollX !== left || window.scrollY !== top) window.scrollTo({ left, top, behavior: "instant" });
   }
   _unlockScroll() {
     if (!this._scrollLocked) return;
     this._scrollLocked = false;
+    window.removeEventListener("scroll", this._onLockedScroll);
+    this._scrollPosition = null;
     const html = document.documentElement;
     document.body.classList.remove("razorbox-scroll-lock");
     html.classList.remove("razorbox-had-scrollbar");
