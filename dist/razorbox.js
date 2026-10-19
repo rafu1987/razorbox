@@ -367,6 +367,7 @@ const _razorbox = class _razorbox {
     this._scrollCompensation = null;
     this._scrollLocked = false;
     this._scrollPosition = null;
+    this._arrowObserver = null;
     this._closeTimer = null;
     this._closeTransitionHandler = null;
     this._slideTimer = null;
@@ -544,6 +545,23 @@ const _razorbox = class _razorbox {
     this._thumbScroller.addEventListener("lostpointercapture", this._onThumbPointerUp);
     this._thumbScroller.addEventListener("wheel", this._onThumbWheel, { passive: false });
     this._thumbScroller.addEventListener("click", this._onThumbClickCapture, true);
+    if (typeof ResizeObserver === "function") this._arrowObserver = new ResizeObserver(() => this._alignArrows());
+  }
+  // Content is pushed up by the asymmetric slide padding and the caption below
+  // it, so the arrows follow its center instead of the viewport's. Offsets
+  // ignore transforms: zooming and panning an image do not move the arrows.
+  _alignArrows() {
+    const content = this._visibleSlide?.querySelector(".razorbox__media, .razorbox__image");
+    if (content?.offsetHeight) this._ui.style.setProperty("--rb-arrow-top", `${content.offsetTop + content.offsetHeight / 2}px`);
+    else this._ui.style.removeProperty("--rb-arrow-top");
+  }
+  _observeArrows(slide) {
+    if (!this._arrowObserver) return this._alignArrows();
+    this._arrowObserver.disconnect();
+    this._arrowObserver.observe(this._stage);
+    const content = slide.querySelector(".razorbox__media, .razorbox__image");
+    if (content) this._arrowObserver.observe(content);
+    this._alignArrows();
   }
   _listenGlobal() {
     document.addEventListener("keydown", this._onKeydown);
@@ -984,6 +1002,7 @@ const _razorbox = class _razorbox {
       this._visibleSlide = slide;
       slide.classList.add("is-active");
       slide.classList.remove("is-pending");
+      this._observeArrows(slide);
       if (outgoing && outgoing !== slide) {
         outgoing.classList.remove("is-active");
         outgoing.classList.add("is-leaving", slide.dataset.direction === "left" ? "to-right" : "to-left");
@@ -1161,6 +1180,7 @@ const _razorbox = class _razorbox {
       else caption.textContent = item.caption;
       slide.append(caption);
     }
+    if (this._visibleSlide === slide) this._alignArrows();
     this._counter.textContent = `${this._index + 1} / ${this._items.length}`;
     const typeLabel = this._t(item.type === "youtube" || item.type === "vimeo" || item.type === "video" ? "video" : item.type === "html" ? "content" : item.type === "iframe" ? "embeddedPage" : item.type);
     this._status.textContent = this._t("status", { type: typeLabel, number: this._index + 1, total: this._items.length, alt: item.alt });
@@ -1602,6 +1622,7 @@ const _razorbox = class _razorbox {
         this._closeTransitionHandler = null;
       }
       this._unlockScroll();
+      this._arrowObserver?.disconnect();
       this._ui.hidden = true;
       this._ui.classList.remove("is-open", "is-entered", "is-closing");
       for (const slide of [...this._stage.querySelectorAll(".razorbox__slide")]) this._removeSlide(slide);
@@ -1645,6 +1666,8 @@ const _razorbox = class _razorbox {
     this._triggerRoot.removeEventListener("pointerdown", this._onTriggerIntent);
     this._triggerRoot.removeEventListener("mouseover", this._onTriggerIntent);
     this._triggerRoot.removeEventListener("focusin", this._onTriggerIntent);
+    this._arrowObserver?.disconnect();
+    this._arrowObserver = null;
     this._ui?.remove();
     this._ui = null;
     this._preloadCache.clear();

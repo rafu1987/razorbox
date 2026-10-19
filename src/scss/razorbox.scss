@@ -648,9 +648,11 @@ body {
     }
   }
 
+  // --rb-arrow-top is set by JS to the center of the active content; 50% is the fallback.
+  // No transition on top: it follows the content frame by frame while the viewport resizes.
   &__arrow {
     position: absolute;
-    top: 50%;
+    top: var(--rb-arrow-top, 50%);
     z-index: 5;
     display: flex;
     align-items: center;

@@ -483,7 +483,7 @@ body.razorbox-scroll-lock {
 }
 .razorbox__arrow {
   position: absolute;
-  top: 50%;
+  top: var(--rb-arrow-top, 50%);
   z-index: 5;
   display: flex;
   align-items: center;
