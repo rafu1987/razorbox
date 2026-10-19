@@ -1,3 +1,23 @@
+## 0.7.0-alpha.10 - 2026-10-19
+
+### Features
+
+- Inline HTML follows the dark and light theme
+- Usable video and content on phones in landscape
+
+### Bug fixes
+
+- Keep the page from scrolling while razorbox opens
+- Center the arrows on the content instead of the viewport
+- Keep caption text size stable on iPhone in landscape
+
+### Tasks
+
+- Use Opus as the default Claude Code model
+- Commit without Claude attribution
+- Increase the backdrop opacity to 95%
+- Load the SCSS source in yarn dev
+
 ## 0.7.0-alpha.9 - 2026-10-18
 
 ### Bug fixes
