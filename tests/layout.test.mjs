@@ -1,4 +1,4 @@
-/* Scroll lock, arrow placement and backdrop in a real browser. */
+/* Scroll lock, arrow placement, backdrop and inline HTML theme in a real browser. */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { chromium, sleep, waitUntil, withDemo } from './helpers/browser.mjs'
@@ -66,13 +66,32 @@ test('the arrows are centered on every content type', { skip }, t => withDemo(t,
   }
 }))
 
-// Issue #2: a denser backdrop, in both themes.
-test('the backdrop is dense enough to hide the page', { skip }, t => withDemo(t, async browser => {
+// Issues #2 and #4: a denser backdrop and inline HTML in the theme's colors.
+test('backdrop and inline HTML follow the theme', { skip }, t => withDemo(t, async browser => {
   const previousTheme = await browser.eval('window.razorboxDemo.options.theme')
-  for (const [theme, expected] of [['dark', 'rgba(19, 19, 21, 0.95)'], ['light', 'rgba(247, 247, 250, 0.95)']]) {
+  const read = `(() => {
+    const panel = getComputedStyle(document.querySelector('.razorbox__media--html'))
+    const input = getComputedStyle(document.querySelector('.razorbox #demo-inline-input'))
+    return {
+      backdrop: getComputedStyle(document.querySelector('.razorbox__backdrop')).backgroundColor,
+      panel: panel.backgroundColor,
+      scheme: panel.colorScheme,
+      text: panel.color,
+      input: input.color
+    }
+  })()`
+  for (const [theme, expected] of [
+    ['dark', { backdrop: 'rgba(19, 19, 21, 0.95)', panel: 'rgb(30, 30, 33)', scheme: 'dark', text: 'rgb(236, 236, 239)' }],
+    ['light', { backdrop: 'rgba(247, 247, 250, 0.95)', panel: 'rgb(255, 255, 255)', scheme: 'light', text: 'rgb(36, 37, 42)' }]
+  ]) {
     await browser.eval(`window.razorboxDemo.options.theme = ${JSON.stringify(theme)}; true`)
-    await openCard(browser, '.gallery-card')
-    assert.equal(await browser.eval('getComputedStyle(document.querySelector(".razorbox__backdrop")).backgroundColor'), expected, `${theme}: backdrop`)
+    await openCard(browser, '.media-card[data-type=html]')
+    const actual = await browser.eval(read)
+    assert.equal(actual.backdrop, expected.backdrop, `${theme}: backdrop`)
+    assert.equal(actual.panel, expected.panel, `${theme}: HTML panel background`)
+    assert.equal(actual.scheme, expected.scheme, `${theme}: HTML panel color-scheme`)
+    assert.equal(actual.text, expected.text, `${theme}: HTML panel text`)
+    assert.equal(actual.input, expected.text, `${theme}: inline form fields use the panel's text color`)
     await close(browser)
   }
   await browser.eval(`window.razorboxDemo.options.theme = ${JSON.stringify(previousTheme)}; true`)

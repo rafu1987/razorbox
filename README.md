@@ -232,7 +232,7 @@ Use `theme: 'dark'`, `'light'` or `'auto'`, and override `--rb-*` custom propert
 }
 ```
 
-Available properties: `--rb-background`, `--rb-text-color`, `--rb-caption-color`, `--rb-icon-color`, `--rb-focus-color`, `--rb-toolbar-background`, `--rb-toolbar-hover`, `--rb-toolbar-inset`, `--rb-button-size`, `--rb-arrow-background`, `--rb-arrow-hover`, `--rb-counter-background`, `--rb-media-background`, `--rb-html-background`, `--rb-html-color`, `--rb-thumbnails-background`, `--rb-thumbnails-height`, `--rb-thumb-background`, `--rb-thumb-border`, `--rb-backdrop-duration`, `--rb-transition`.
+Available properties: `--rb-background`, `--rb-text-color`, `--rb-caption-color`, `--rb-icon-color`, `--rb-focus-color`, `--rb-toolbar-background`, `--rb-toolbar-hover`, `--rb-toolbar-inset`, `--rb-button-size`, `--rb-arrow-background`, `--rb-arrow-hover`, `--rb-counter-background`, `--rb-media-background`, `--rb-html-background`, `--rb-html-color`, `--rb-color-scheme` (`dark` or `light`, used by inline HTML form controls), `--rb-thumbnails-background`, `--rb-thumbnails-height`, `--rb-thumb-background`, `--rb-thumb-border`, `--rb-backdrop-duration`, `--rb-transition`.
 
 ### Image zoom
 

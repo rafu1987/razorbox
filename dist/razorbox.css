@@ -21,8 +21,9 @@ body.razorbox-scroll-lock {
   --rb-thumb-background: #424247;
   --rb-thumb-border: #fff;
   --rb-caption-color: #fff;
-  --rb-html-background: #fff;
-  --rb-html-color: #222;
+  --rb-html-background: #1e1e21;
+  --rb-html-color: #ececef;
+  --rb-color-scheme: dark;
   --rb-media-background: #090909;
   --rb-focus-color: #fff;
   --rb-button-size: 44px;
@@ -62,6 +63,7 @@ body.razorbox-scroll-lock {
   --rb-caption-color: #282930;
   --rb-html-background: #fff;
   --rb-html-color: #24252a;
+  --rb-color-scheme: light;
   --rb-media-background: #e3e4e9;
   --rb-focus-color: #303039;
 }
@@ -82,6 +84,7 @@ body.razorbox-scroll-lock {
     --rb-caption-color: #282930;
     --rb-html-background: #fff;
     --rb-html-color: #24252a;
+    --rb-color-scheme: light;
     --rb-media-background: #e3e4e9;
     --rb-focus-color: #303039;
   }
@@ -358,6 +361,7 @@ body.razorbox-scroll-lock {
   color: var(--rb-html-color);
   touch-action: pan-y;
   background: var(--rb-html-background);
+  color-scheme: var(--rb-color-scheme);
 }
 .razorbox__html {
   padding: clamp(18px, 4vw, 40px);
